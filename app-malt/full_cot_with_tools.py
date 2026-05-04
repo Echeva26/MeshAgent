@@ -1,12 +1,17 @@
 import json
 import traceback
 from dotenv import load_dotenv
-import openai
 import copy
 import pandas as pd
 from collections import Counter
 from prototxt_parser.prototxt import parse
 import os
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from common.embeddings_provider import embed_text
+from common.vector_store import search_constraints, search_tools
 from ai_models_cot import summary_gen_chain, cot_plus_tool_chain, pySelfDebugger
 from helper import getGraphData, extract_constraints, extract_tools, clean_up_llm_output_func, check_list_equal, node_attributes_are_equal, clean_up_output_graph_data
 from error_check import MyChecker
@@ -14,28 +19,14 @@ import networkx as nx
 import jsonlines
 import random
 from networkx.readwrite import json_graph
-from langchain.callbacks import get_openai_callback
 import json
 import re
 import time
-import sys
 import numpy as np
 from tenacity import retry, wait_random_exponential, stop_after_attempt
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-from azure.search.documents.models import Vector
 
 # Load environ variables from .env, will not override existing environ variables
 load_dotenv()
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-constraint_index_name = os.getenv("RAG_MALT_CONSTRAINT")
-tool_index_name = os.getenv("RAG_MALT_TOOL")
-azure_search_key = os.getenv("AZURE_SEARCH_ADMIN_KEY")
-openai.api_type = os.getenv("OPENAI_API_TYPE")
-openai.api_key = os.getenv("OPENAI_API_KEY")
-openai.api_base = os.getenv("OPENAI_API_BASE")
-openai.api_version = os.getenv("OPENAI_API_VERSION")
-credential = AzureKeyCredential(azure_search_key)
 
 EACH_PROMPT_RUN_TIME = 1
 OUTPUT_JSONL_PATH = 'logs/gpt4/srikanth_queries_2.jsonl'
@@ -47,10 +38,7 @@ MODEL_SOURCE = "OPENAI"
 @retry(wait=wait_random_exponential(min=1, max=20), stop=stop_after_attempt(6))
 # Function to generate embeddings for title and content fields, also used for query embeddings
 def generate_embeddings(text):
-    response = openai.Embedding.create(
-        input=text, engine="text-embedding-ada-002")
-    embeddings = response['data'][0]['embedding']
-    return embeddings
+    return embed_text(text)
 
 
 def rag_constraint_search(query, num_extraction=13):
@@ -58,15 +46,7 @@ def rag_constraint_search(query, num_extraction=13):
     With given query, use hybrid search to find the most related constraints from RAG.
     It assumes index is already created and uploaded.
     '''
-    # Pure Vector Search
-    search_client = SearchClient(service_endpoint, constraint_index_name, AzureKeyCredential(azure_search_key))
-
-    results = search_client.search(
-        search_text='',
-        vector=Vector(value=generate_embeddings(query), k=num_extraction, fields="constraintVector"),
-        select=["label", "constraint"]
-    )
-
+    results = search_constraints("app-malt", query, num_extraction)
     return extract_constraints(results)
 
 def rag_tool_search(query, num_extraction=1):
@@ -74,15 +54,7 @@ def rag_tool_search(query, num_extraction=1):
     With given query, use vector search to find the most related tools from RAG.
     It assumes index is already created and uploaded.
     '''
-    # Pure Vector Search
-    search_client = SearchClient(service_endpoint, tool_index_name, AzureKeyCredential(azure_search_key))
-
-    results = search_client.search(
-        search_text='',
-        vector=Vector(value=generate_embeddings(query), k=num_extraction, fields="descriptionVector"),
-        select=["description", "tool"]
-    )
-
+    results = search_tools("app-malt", query, num_extraction)
     return extract_tools(results)
 
 def self_debug_process_loop(requestData, constraints_found, code, error_details, debug_status_msg, loop_time_index):
@@ -290,7 +262,7 @@ def userQuery(prompt_list):
             step_summary = diff_model_source_output_format(summary_output)
 
             # Use regular expressions to split the string by 'Step X:' where X is a digit
-            steps = re.split('Step \d+: ', step_summary)
+            steps = re.split(r'Step \d+: ', step_summary)
             # Remove the first element which is empty due to the split
             steps = steps[1:]
 

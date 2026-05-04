@@ -1,40 +1,30 @@
 import json
 import traceback
 from dotenv import load_dotenv
-import openai
 import pandas as pd
 from prototxt_parser.prototxt import parse
 from collections import Counter
 import os
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from common.embeddings_provider import embed_text
+from common.vector_store import search_constraints
 from ai_models_cot import constraint_only_chain
 from helper import getGraphData, extract_constraints, clean_up_llm_output_func, check_list_equal, node_attributes_are_equal
 import networkx as nx
 import jsonlines
 import random
 from networkx.readwrite import json_graph
-from langchain.callbacks import get_openai_callback
 import json
 import re
 import time
-import sys
 import numpy as np
 from tenacity import retry, wait_random_exponential, stop_after_attempt
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.models import Vector
 
 # Load environ variables from .env, will not override existing environ variables
 load_dotenv()
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-constraint_index_name = os.getenv("RAG_MALT_CONSTRAINT")
-tool_index_name = os.getenv("RAG_MALT_TOOL")
-azure_search_key = os.getenv("AZURE_SEARCH_ADMIN_KEY")
-openai.api_type = os.getenv("OPENAI_API_TYPE")
-openai.api_key = os.getenv("OPENAI_API_KEY")
-openai.api_base = os.getenv("OPENAI_API_BASE")
-openai.api_version = os.getenv("OPENAI_API_VERSION")
-credential = AzureKeyCredential(azure_search_key)
 
 EACH_PROMPT_RUN_TIME = 1
 OUTPUT_JSONL_PATH = 'logs/debug/baseline_static.jsonl'
@@ -42,10 +32,7 @@ OUTPUT_JSONL_PATH = 'logs/debug/baseline_static.jsonl'
 @retry(wait=wait_random_exponential(min=1, max=20), stop=stop_after_attempt(6))
 # Function to generate embeddings for title and content fields, also used for query embeddings
 def generate_embeddings(text):
-    response = openai.Embedding.create(
-        input=text, engine="text-embedding-ada-002")
-    embeddings = response['data'][0]['embedding']
-    return embeddings
+    return embed_text(text)
 
 
 def rag_vector_search(query, num_extraction=9):
@@ -53,15 +40,7 @@ def rag_vector_search(query, num_extraction=9):
     With given query, use pure vector search to find the most related items from RAG.
     It assumes index is already created and uploaded.
     '''
-    # Pure Vector Search
-    search_client = SearchClient(service_endpoint, constraint_index_name, AzureKeyCredential(azure_search_key))
-
-    results = search_client.search(
-        search_text='',
-        vector=Vector(value=generate_embeddings(query), k=num_extraction, fields="constraintVector"),
-        select=["label", "constraint"]
-    )
-
+    results = search_constraints("app-malt", query, num_extraction)
     return extract_constraints(results)
 
 def userQuery(prompt_list):

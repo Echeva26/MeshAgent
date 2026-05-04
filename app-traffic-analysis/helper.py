@@ -1,7 +1,6 @@
 import json
 import traceback
 from dotenv import load_dotenv
-import openai
 import pandas as pd
 from prototxt_parser.prototxt import parse
 from collections import Counter
@@ -11,17 +10,12 @@ import networkx as nx
 import jsonlines
 import random
 from networkx.readwrite import json_graph
-from langchain.callbacks import get_openai_callback
 import json
 import re
 import time
 import sys
 import numpy as np
 from tenacity import retry, wait_random_exponential, stop_after_attempt
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-from azure.search.documents.indexes import SearchIndexClient
-# from azure.search.documents.models import Vector
 
 # Load environ variables from .env, will not override existing environ variables
 load_dotenv()
@@ -38,11 +32,9 @@ def getGraphData():
     return G
 
 def count_tokens(chain, query):
-    with get_openai_callback() as cb:
-        result = chain.run(query)
-        print(f'Spent a total of {cb.total_tokens} tokens')
-
-    return cb.total_tokens
+    chain.run(query)
+    print("Token counting is unavailable for the local vLLM provider.")
+    return 0
 
 def node_attributes_are_equal(node1_attrs, node2_attrs):
     # Check if both nodes have the exact same set of attributes

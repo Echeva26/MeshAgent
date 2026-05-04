@@ -1,55 +1,21 @@
 import os
-import openai
+import sys
+from pathlib import Path
 from dotenv import load_dotenv
 import json
 import pandas as pd
 import inspect
 import re
-from langchain.llms import VertexAI
-import google.generativeai as genai
-from langchain.prompts import PromptTemplate, FewShotPromptTemplate
-from langchain.chains import LLMChain, LLMMathChain, TransformChain, SequentialChain
-from langchain.callbacks import get_openai_callback
-from langchain.agents import ZeroShotAgent, Tool, AgentExecutor, load_tools
-# For GPT3.5 or GPT4
-from langchain.chat_models import AzureChatOpenAI
-# For other models: text-davinci-003
-from langchain.llms import AzureOpenAI
+from langchain_core.prompts import PromptTemplate
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from common.chain_compat import PromptLLMChain
+from common.llm_provider import get_llm
 
 # Load environ variables from .env, will not override existing environ variables
 load_dotenv()
 
-OPENAI_API_BASE = os.getenv('OPENAI_API_BASE')
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-# For GPT-4 in Azure
-llm = AzureChatOpenAI(
-    openai_api_type='azure',
-    openai_api_base=OPENAI_API_BASE,
-    openai_api_version="2023-05-15",
-    deployment_name='gpt-4-32k',
-    model_name='gpt-4-32k',
-    openai_api_key=OPENAI_API_KEY,
-    temperature=0.0,
-    max_tokens=4000,
-    )
-
-# # For GPT-3.5 in Azure
-# llm = AzureChatOpenAI(
-#     openai_api_type='azure',
-#     openai_api_base=OPENAI_API_BASE,
-#     openai_api_version="2023-05-15",
-#     deployment_name='gpt-35-turbo-16k',
-#     model_name='gpt-35-turbo-16k',
-#     openai_api_key=OPENAI_API_KEY,
-#     temperature=0.3,
-#     max_tokens=4000,
-#     )
-
-# genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
-# llm = VertexAI(model_name="gemini-pro",
-#                max_output_tokens=1000,
-#                temperature=0.5)
+llm = get_llm()
 
 # For baseline and query-specific constraint only:
 constraint_prefix = """
@@ -79,7 +45,7 @@ constraint_prompt = PromptTemplate(
     template=constraint_prefix + constraint_suffix
 )
 
-constraint_only_chain = LLMChain(llm=llm, prompt=constraint_prompt)
+constraint_only_chain = PromptLLMChain(llm=llm, prompt=constraint_prompt)
 
 
 # For summary of steps
@@ -202,4 +168,4 @@ self_debug_prompt = PromptTemplate(
     template=debug_prefix + debug_suffix
 )
 
-pySelfDebugger = LLMChain(llm=llm, prompt=self_debug_prompt)
+pySelfDebugger = PromptLLMChain(llm=llm, prompt=self_debug_prompt)

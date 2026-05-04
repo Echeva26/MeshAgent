@@ -1,15 +1,15 @@
-# For LLM model
-OPENAI_API_TYPE='azure'
-OPENAI_API_VERSION='2023-05-15'
-OPENAI_API_KEY=""
-OPENAI_API_BASE=""
+# Local OpenAI-compatible LLM served by vLLM.
+LLM_BASE_URL=http://localhost:8000/v1
+LLM_MODEL=Qwen/Qwen2.5-Coder-14B-Instruct
+LLM_API_KEY=EMPTY
+LLM_TEMPERATURE=0
+LLM_MAX_TOKENS=4000
 
-# For Azure Search
-AZURE_SEARCH_ADMIN_KEY=""
-AZURE_SEARCH_SERVICE_ENDPOINT=""
-AZURE_SEARCH_INDEX_NAME="rag-test-copilot"
-AZURE_OPENAI_API_VERSION='2023-05-15'
+# Local embeddings.
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 
-# For RAG index
-RAG_MALT_CONSTRAINT="app-traffic-rag-constraint"
-RAG_MALT_TOOL="app-traffic-rag-tool"
+# Local Qdrant.
+QDRANT_URL=http://localhost:6333
+QDRANT_API_KEY=
+QDRANT_CONSTRAINT_COLLECTION=meshagent_constraints
+QDRANT_TOOL_COLLECTION=meshagent_tools

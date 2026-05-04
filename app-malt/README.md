@@ -1,52 +1,32 @@
-# README
-## Prerequisites
-To run the code, install the following packages. Please note that the pip install azure-search-documents==11.4.0a20230509004 is currently using the Dev Feed. For instructions on how to connect to the dev feed, please visit [Azure-Python-SDK Azure Search Documents Dev Feed](https://dev.azure.com/azure-sdk/public/_artifacts/feed/azure-sdk-for-python/connect/pip).
+# app-malt
 
-To set up Google VertexAI API, follow the below steps:
-1. [Install the gcloud CLI](https://cloud.google.com/sdk/docs/install)
-2. [Create your credential file](https://cloud.google.com/docs/authentication/provide-credentials-adc#local-dev)
-3. [Create a project and enable VertexAI](https://cloud.google.com/vertex-ai/docs/tutorials/tabular-bq-prediction/create-notebook) (follow error messages for detailed setup)
+This app now uses the repository-level local providers:
 
+- vLLM through `LLM_BASE_URL` and `LLM_MODEL`
+- sentence-transformers through `EMBEDDING_MODEL`
+- Qdrant through `QDRANT_URL`
+
+Install dependencies and configure `.env` from the repository root:
+
+```bash
+pip install -r ../requirements.txt
+cp ../.env.example ../.env
 ```
-! pip install azure-search-documents==11.4.0a20230509004
-! pip install openai
-! pip install python-dotenv
-! pip install jsonlines==3.1.0
-! pip3 install prototxt-parser
-! pip install google-generativeai
-! pip install langchain google-cloud-aiplatform
-! pip install langchain==0.0.350
-! pip install langchain-experimental
-```
-
-## Setup .env
-Fill in the required API or address in `.env`.
-```
-# For OpenAI LLM model
-OPENAI_API_TYPE=''
-OPENAI_API_VERSION=''
-OPENAI_API_KEY=""
-OPENAI_API_BASE=""
-
-# For Azure
-AZURE_SEARCH_ADMIN_KEY=""
-AZURE_SEARCH_SERVICE_ENDPOINT=""
-AZURE_SEARCH_INDEX_NAME=""
-AZURE_OPENAI_API_VERSION=''
-
-# For Google LLM model
-GOOGLE_API_KEY=""
-
-# For RAG index
-RAG_MALT_CONSTRAINT=""
-RAG_MALT_TOOL=""
-```
-
 
 ## Build RAG
-Add constraints RAG under `data/rag_constraints.json`, add tools RAG under `data/rag_tools.json`.
 
-Go to `create_RAG_index`, run the two jupyter notebook to create index for rag_constraints and rag_tools.
+The RAG source files remain:
+
+- `data/rag_constraints.json`
+- `data/rag_tools.json`
+
+Build the local Qdrant collections from the repository root:
+
+```bash
+python scripts/build_qdrant_indexes.py --app app-malt
+```
+
+The old notebooks under `create_RAG_index/` are legacy Azure references and are no longer needed for local runs.
 
 ## Build error_checker
 

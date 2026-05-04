@@ -1,0 +1,14 @@
+openai
+langchain
+langchain-openai
+python-dotenv
+jsonlines==3.1.0
+prototxt-parser
+networkx
+numpy
+pandas
+scikit-learn
+tenacity
+sentence-transformers
+qdrant-client
+Faker
