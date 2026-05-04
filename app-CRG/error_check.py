@@ -9,17 +9,12 @@ import ipaddress
 
 class MyChecker():
     def __init__(self, ret_graph=None, ret_list=None):
-        if ret_graph:
-            self.graph = ret_graph
-        else:
-            self.graph = None
-        if ret_list:
-            self.output_list = ret_list
-        else:
-            self.output_list = None
+        # No usar truthiness: un grafo vacío es falsy pero válido para chequear tipos.
+        self.graph = ret_graph if ret_graph is not None else None
+        self.output_list = ret_list if ret_list is not None else None
 
     def evaluate_all(self):
-        if self.graph:
+        if self.graph is not None:
             graph_checks = [self.verify_node_type]
             for check in graph_checks:
                 try:
@@ -30,8 +25,11 @@ class MyChecker():
                     return False, e
             return True, ""
 
-        if self.output_list:
+        if self.output_list is not None:
             return True, ""
+
+        # Caso defensivo: no hay nada que validar
+        return False, ValueError("No output to verify (graph and output_list are None).")
 
     def verify_node_type(self):
         """

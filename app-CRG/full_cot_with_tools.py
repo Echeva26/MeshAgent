@@ -197,10 +197,9 @@ def self_debug_execution_error(code, requestData, constraints_found):
                     writer.write({"Result": "Fail, code cannot run"})
                     writer.write({"LLM code": debugged_code})
                     writer.write({"Error": str(e)})
-                # break from the current for loop
-                continue
+                break
 
-        return None, None
+    return None, None
 
 def diff_model_source_output_format(model_output):
     if MODEL_SOURCE == "OPENAI":
