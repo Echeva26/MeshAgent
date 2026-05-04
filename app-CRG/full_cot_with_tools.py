@@ -234,14 +234,14 @@ def userQuery(prompt_list):
         # Reset ret when it's a new test
         ret = None
         ground_truth_ret = None
+        has_ground_truth = requestData['query'] in allAnswer
 
         # Run each prompt for 10 times
         for i in range(EACH_PROMPT_RUN_TIME):
-            if requestData['query'] not in allAnswer.keys():
-                # terminate the code with error message
-                raise SystemExit('Un-support ground truth for the current prompt.')
-
-            print("Find the prompt in the list.")
+            if not has_ground_truth:
+                print("Un-support ground truth for the current prompt. Running in inference-only mode.")
+            else:
+                print("Find the prompt in the list.")
 
             print("Calling model")
             summary_output = summary_gen_chain.invoke({"input": requestData['query']})
@@ -388,57 +388,77 @@ def userQuery(prompt_list):
 
             if ret['type'] == 'graph':
                 ret_graph_copy = clean_up_output_graph_data(ret)
-
-            goldenAnswerCode = allAnswer[requestData['query']]
-
-            # ground truth answer should already be checked to ensure it can run successfully
-            exec(goldenAnswerCode)
-            ground_truth_ret = eval("ground_truth_process_graph(G)")
-            # if the type of ground_truth_ret is string, turn it into a json object
-            if isinstance(ground_truth_ret, str):
-                ground_truth_ret = json.loads(ground_truth_ret)
-
-            ground_truth_ret['reply'] = goldenAnswerCode
             ret['reply'] = code
 
-            # check type "text", "list", "table", "graph" separately.
-            if ground_truth_ret['type'] == 'text':
-                # if ret['data'] type is int, turn it into string
-                if isinstance(ret['data'], int):
-                    ret['data'] = str(ret['data'])
-                if isinstance(ground_truth_ret['data'], int):
-                    ground_truth_ret['data'] = str(ground_truth_ret['data'])
+            if has_ground_truth:
+                goldenAnswerCode = allAnswer[requestData['query']]
 
-                if ground_truth_ret['data'] == ret['data']:
-                    prompt_accu = ground_truth_check_accu(prompt_accu, requestData, ground_truth_ret, ret, llm_output_token_count)
-                else:
-                    ground_truth_check_debug(requestData, ground_truth_ret, ret, llm_output_token_count)
+                # ground truth answer should already be checked to ensure it can run successfully
+                exec(goldenAnswerCode)
+                ground_truth_ret = eval("ground_truth_process_graph(G)")
+                # if the type of ground_truth_ret is string, turn it into a json object
+                if isinstance(ground_truth_ret, str):
+                    ground_truth_ret = json.loads(ground_truth_ret)
 
-            elif ground_truth_ret['type'] == 'list':
-                # Use Counter to check if two lists contain the same items, including duplicate items.
-                if check_list_equal(ground_truth_ret['data'], ret['data']):
-                    prompt_accu = ground_truth_check_accu(prompt_accu, requestData, ground_truth_ret, ret, llm_output_token_count)
-                else:
-                    ground_truth_check_debug(requestData, ground_truth_ret, ret, llm_output_token_count)
+                ground_truth_ret['reply'] = goldenAnswerCode
 
-            elif ground_truth_ret['type'] == 'table':
-                if ground_truth_ret['data'] == ret['data']:
-                    prompt_accu = ground_truth_check_accu(prompt_accu, requestData, ground_truth_ret, ret, llm_output_token_count)
-                else:
-                    ground_truth_check_debug(requestData, ground_truth_ret, ret, llm_output_token_count)
+                # check type "text", "list", "table", "graph" separately.
+                if ground_truth_ret['type'] == 'text':
+                    # if ret['data'] type is int, turn it into string
+                    if isinstance(ret['data'], int):
+                        ret['data'] = str(ret['data'])
+                    if isinstance(ground_truth_ret['data'], int):
+                        ground_truth_ret['data'] = str(ground_truth_ret['data'])
 
-            elif ground_truth_ret['type'] == 'graph':
-                # Undirected graphs will be converted to a directed graph
-                # with two directed edges for each undirected edge.
-                ground_truth_graph = nx.Graph(ground_truth_ret['data'])
-                # TODO: fix ret_graph_copy reference possible error, when it's not created.
-                ret_graph = nx.Graph(ret_graph_copy)
+                    if ground_truth_ret['data'] == ret['data']:
+                        prompt_accu = ground_truth_check_accu(prompt_accu, requestData, ground_truth_ret, ret, llm_output_token_count)
+                    else:
+                        ground_truth_check_debug(requestData, ground_truth_ret, ret, llm_output_token_count)
 
-                # Check if two graphs are identical, no weights considered
-                if nx.is_isomorphic(ground_truth_graph, ret_graph, node_match=node_attributes_are_equal):
-                    prompt_accu = ground_truth_check_accu(prompt_accu, requestData, ground_truth_ret, ret, llm_output_token_count)
-                else:
-                    ground_truth_check_debug(requestData, ground_truth_ret, ret, llm_output_token_count)
+                elif ground_truth_ret['type'] == 'list':
+                    # Use Counter to check if two lists contain the same items, including duplicate items.
+                    if check_list_equal(ground_truth_ret['data'], ret['data']):
+                        prompt_accu = ground_truth_check_accu(prompt_accu, requestData, ground_truth_ret, ret, llm_output_token_count)
+                    else:
+                        ground_truth_check_debug(requestData, ground_truth_ret, ret, llm_output_token_count)
+
+                elif ground_truth_ret['type'] == 'table':
+                    if ground_truth_ret['data'] == ret['data']:
+                        prompt_accu = ground_truth_check_accu(prompt_accu, requestData, ground_truth_ret, ret, llm_output_token_count)
+                    else:
+                        ground_truth_check_debug(requestData, ground_truth_ret, ret, llm_output_token_count)
+
+                elif ground_truth_ret['type'] == 'graph':
+                    # Undirected graphs will be converted to a directed graph
+                    # with two directed edges for each undirected edge.
+                    ground_truth_graph = nx.Graph(ground_truth_ret['data'])
+                    # TODO: fix ret_graph_copy reference possible error, when it's not created.
+                    ret_graph = nx.Graph(ret_graph_copy)
+
+                    # Check if two graphs are identical, no weights considered
+                    if nx.is_isomorphic(ground_truth_graph, ret_graph, node_match=node_attributes_are_equal):
+                        prompt_accu = ground_truth_check_accu(prompt_accu, requestData, ground_truth_ret, ret, llm_output_token_count)
+                    else:
+                        ground_truth_check_debug(requestData, ground_truth_ret, ret, llm_output_token_count)
+            else:
+                # Save requestData and output into a JsonLine file (no ground truth available)
+                with jsonlines.open(OUTPUT_JSONL_PATH, mode='a') as writer:
+                    writer.write(requestData)
+                    writer.write({"Result": "No ground truth"})
+                    writer.write({"LLM code": ret.get('reply')})
+                    writer.write({"LLM output type": ret.get('type')})
+                    if ret.get('type') == 'graph':
+                        try:
+                            writer.write({
+                                "LLM graph stats": {
+                                    "nodes": int(ret_graph_copy.number_of_nodes()),
+                                    "edges": int(ret_graph_copy.number_of_edges()),
+                                }
+                            })
+                        except Exception:
+                            writer.write({"LLM graph stats": "unavailable"})
+                    else:
+                        writer.write({"LLM exec": ret.get('data')})
 
             # sleep for 60 seconds, to avoid the API call limit
             time.sleep(10)
@@ -446,7 +466,10 @@ def userQuery(prompt_list):
         print("=========Current query process is done!=========")
         print(requestData)
         print("Total test times: ", EACH_PROMPT_RUN_TIME)
-        print("Testing accuracy: ", prompt_accu/EACH_PROMPT_RUN_TIME)
+        if has_ground_truth:
+            print("Testing accuracy: ", prompt_accu/EACH_PROMPT_RUN_TIME)
+        else:
+            print("Testing accuracy: skipped (no ground truth)")
 
     return ret
 

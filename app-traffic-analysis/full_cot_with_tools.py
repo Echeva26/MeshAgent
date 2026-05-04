@@ -196,10 +196,9 @@ def self_debug_execution_error(code, requestData, constraints_found):
                     writer.write({"Result": "Fail, code cannot run"})
                     writer.write({"LLM code": debugged_code})
                     writer.write({"Error": str(e)})
-                # break from the current for loop
-                continue
+                break
 
-        return None, None
+    return None, None
 
 def diff_model_source_output_format(model_output):
     if MODEL_SOURCE == "OPENAI":
@@ -272,6 +271,13 @@ def userQuery(prompt_list):
                     first_step_code = self_debugged_code_1
 
             # if the type of ret is string, turn it into a json object
+            if first_step_ret is None:
+                print("Fail the test, the code cannot run (first step returned None).")
+                with jsonlines.open(OUTPUT_JSONL_PATH, mode='a') as writer:
+                    writer.write(requestData)
+                    writer.write({"Result": "Fail, code cannot run (first step None)"})
+                    writer.write({"LLM code": first_step_code})
+                continue
             if isinstance(first_step_ret, str):
                 first_step_ret = json.loads(first_step_ret)
             if first_step_ret['type'] == 'graph':
@@ -307,6 +313,13 @@ def userQuery(prompt_list):
                     second_step_code = self_debugged_code_2
 
             # if the type of ret is string, turn it into a json object
+            if second_step_ret is None:
+                print("Fail the test, the code cannot run (second step returned None).")
+                with jsonlines.open(OUTPUT_JSONL_PATH, mode='a') as writer:
+                    writer.write(requestData)
+                    writer.write({"Result": "Fail, code cannot run (second step None)"})
+                    writer.write({"LLM code": second_step_code})
+                continue
             if isinstance(second_step_ret, str):
                 second_step_ret = json.loads(second_step_ret)
             if second_step_ret['type'] == 'graph':
@@ -346,6 +359,13 @@ def userQuery(prompt_list):
                         third_step_code = self_debugged_code_3
 
                 # if the type of ret is string, turn it into a json object
+                if third_step_ret is None:
+                    print("Fail the test, the code cannot run (third step returned None).")
+                    with jsonlines.open(OUTPUT_JSONL_PATH, mode='a') as writer:
+                        writer.write(requestData)
+                        writer.write({"Result": "Fail, code cannot run (third step None)"})
+                        writer.write({"LLM code": third_step_code})
+                    continue
                 if isinstance(third_step_ret, str):
                     third_step_ret = json.loads(third_step_ret)
                 if third_step_ret['type'] == 'graph':
