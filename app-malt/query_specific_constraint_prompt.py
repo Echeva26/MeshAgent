@@ -10,6 +10,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from common.embeddings_provider import embed_text
+from common.graph_json import node_link_graph_compat
 from common.vector_store import search_constraints
 from ai_models_cot import constraint_only_chain
 from helper import getGraphData, extract_constraints, clean_up_llm_output_func, check_list_equal, node_attributes_are_equal
@@ -116,7 +117,7 @@ def userQuery(prompt_list):
                     ret['data'] = jsonGraph
 
                 else:   # Convert the jsonGraph back to nx.graph, to check if they are identical later
-                    ret_graph_copy = json_graph.node_link_graph(ret['data'])
+                    ret_graph_copy = node_link_graph_compat(ret['data'])
 
             goldenAnswerCode = allAnswer[requestData['query']]
 

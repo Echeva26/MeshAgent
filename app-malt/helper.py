@@ -1,5 +1,6 @@
 import json
 import traceback
+from pathlib import Path
 from dotenv import load_dotenv
 import pandas as pd
 from prototxt_parser.prototxt import parse
@@ -19,6 +20,10 @@ from tenacity import retry, wait_random_exponential, stop_after_attempt
 
 # Load environ variables from .env, will not override existing environ variables
 load_dotenv()
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+from common.graph_json import node_link_graph_compat
 
 def count_tokens(chain, query):
     chain.run(query)
@@ -112,7 +117,7 @@ def clean_up_output_graph_data(ret):
         ret['data'] = jsonGraph
 
     else:  # Convert the jsonGraph back to nx.graph, to check if they are identical later
-        ret_graph_copy = json_graph.node_link_graph(ret['data'])
+        ret_graph_copy = node_link_graph_compat(ret['data'])
 
     return ret_graph_copy
 
