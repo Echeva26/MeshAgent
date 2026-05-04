@@ -34,18 +34,33 @@ LLM_BASE_URL=http://localhost:8000/v1
 LLM_MODEL=Qwen/Qwen2.5-Coder-14B-Instruct
 LLM_API_KEY=EMPTY
 EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
-QDRANT_URL=http://localhost:6333
+QDRANT_MODE=local
+QDRANT_PATH=qdrant_storage
 QDRANT_CONSTRAINT_COLLECTION=meshagent_constraints
 QDRANT_TOOL_COLLECTION=meshagent_tools
 ```
 
-## Start Local Services
+## Qdrant (no Docker required)
 
-Start Qdrant:
+By default the project uses **embedded Qdrant on disk** (Python client with a storage directory). No `docker` daemon or `systemd` is required—suitable for Jupyter or nested containers where `/var/run/docker.sock` is missing.
 
-```bash
-docker run --rm -p 6333:6333 -p 6334:6334 -v "$(pwd)/qdrant_storage:/qdrant/storage" qdrant/qdrant
-```
+- **`QDRANT_MODE=local`** (default): stores vectors under `QDRANT_PATH` (relative paths are resolved from the repository root), e.g. `qdrant_storage/`.
+- **`QDRANT_MODE=server`**: connect to any Qdrant HTTP API. Set **`QDRANT_URL=http://HOST:6333`** (do not assume the service is on `localhost` unless you know it is).
+- **`QDRANT_MODE=memory`**: in-process, non-persisted; useful for quick tests only.
+
+If you omit `QDRANT_MODE` but set `QDRANT_URL` to an HTTP(S) URL, the mode is inferred as **server** (compatible with older `.env` files). If both are unset, **local** is used.
+
+### Optional: Qdrant in Docker
+
+If your environment has a working Docker **daemon** and socket, you can run the official image instead of embedded mode (then set `QDRANT_MODE=server` and `QDRANT_URL=http://localhost:6333`). This is optional.
+
+### Jupyter / container without Docker socket
+
+If `docker run` fails with `connect: no such file or directory` to `/var/run/docker.sock`, the client is installed but the daemon is not available. Use **`QDRANT_MODE=local`** (default) or point **`QDRANT_MODE=server`** at a Qdrant instance that runs **outside** this notebook (another host, Kubernetes service, or a parent VM). Do not try to start Docker with `systemctl` inside images that are not using **systemd** as PID 1.
+
+To use Docker from a notebook at all, the container usually must be started with the host socket mounted, e.g. **`-v /var/run/docker.sock:/var/run/docker.sock`**, or a dedicated Docker-in-Docker setup—this must be configured by the platform, not from inside the repo.
+
+## Start vLLM
 
 Start vLLM for a 36 GB VRAM machine with moderate context and low concurrency:
 

@@ -4,7 +4,7 @@ This app now uses the repository-level local providers:
 
 - vLLM through `LLM_BASE_URL` and `LLM_MODEL`
 - sentence-transformers through `EMBEDDING_MODEL`
-- Qdrant through `QDRANT_URL`
+- Qdrant through `QDRANT_MODE` (default **local** on-disk under `QDRANT_PATH`, or **server** with `QDRANT_URL`)
 
 Install dependencies and configure `.env` from the repository root:
 

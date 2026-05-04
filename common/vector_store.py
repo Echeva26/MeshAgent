@@ -5,8 +5,8 @@ from common.config import collection_name, get_config
 from common.embeddings_provider import embed_text
 
 
-@lru_cache(maxsize=1)
-def get_qdrant_client():
+@lru_cache(maxsize=16)
+def _cached_qdrant_client(mode: str, local_path: str, url: str, api_key: str):
     try:
         from qdrant_client import QdrantClient
     except ImportError as exc:
@@ -15,10 +15,21 @@ def get_qdrant_client():
             "Install dependencies from requirements.txt."
         ) from exc
 
-    config = get_config()
-    if config.qdrant_url in {":memory:", "memory", "in-memory"}:
+    if mode == "memory":
         return QdrantClient(location=":memory:")
-    return QdrantClient(url=config.qdrant_url, api_key=config.qdrant_api_key)
+    if mode == "local":
+        return QdrantClient(path=local_path)
+    return QdrantClient(url=url, api_key=api_key or None)
+
+
+def get_qdrant_client():
+    config = get_config()
+    return _cached_qdrant_client(
+        config.qdrant_mode,
+        str(config.qdrant_local_path),
+        config.qdrant_url,
+        config.qdrant_api_key or "",
+    )
 
 
 def ensure_collection(client: Any, name: str, vector_size: int, recreate: bool = False) -> None:

@@ -8,8 +8,10 @@ LLM_MAX_TOKENS=4000
 # Local embeddings.
 EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 
-# Local Qdrant.
-QDRANT_URL=http://localhost:6333
+# Qdrant: see repo root .env.example. Default is embedded on disk (no Docker).
+QDRANT_MODE=local
+QDRANT_PATH=qdrant_storage
+QDRANT_URL=
 QDRANT_API_KEY=
 QDRANT_CONSTRAINT_COLLECTION=meshagent_constraints
 QDRANT_TOOL_COLLECTION=meshagent_tools
