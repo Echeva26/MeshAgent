@@ -496,7 +496,10 @@ def ground_truth_check_accu(count, requestData, ground_truth_ret, ret, llm_outpu
     return count
 
 def main():
-    # create 'output.jsonl' file if it does not exist
+    # create log dir and file if they do not exist
+    log_dir = os.path.dirname(OUTPUT_JSONL_PATH)
+    if log_dir:
+        os.makedirs(log_dir, exist_ok=True)
     if not os.path.exists(OUTPUT_JSONL_PATH):
         with open(OUTPUT_JSONL_PATH, 'w') as f:
             pass
