@@ -250,8 +250,15 @@ def userQuery(prompt_list):
         # Run each prompt for 10 times
         for i in range(EACH_PROMPT_RUN_TIME):
             if requestData['query'] not in allAnswer.keys():
-                # terminate the code with error message
-                raise SystemExit('Un-support ground truth for the current prompt.')
+                # Do not abort the whole run if a prompt has no golden answer.
+                # Log and skip so we can continue evaluating the remaining prompts.
+                msg = "Skip: no golden answer for this prompt (exact string key mismatch)."
+                print(msg)
+                with jsonlines.open(OUTPUT_JSONL_PATH, mode='a') as writer:
+                    writer.write(requestData)
+                    writer.write({"Result": "Skip"})
+                    writer.write({"Reason": msg})
+                continue
 
             print("Find the prompt in the list.")
 
