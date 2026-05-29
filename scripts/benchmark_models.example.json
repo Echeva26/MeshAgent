@@ -1,0 +1,22 @@
+{
+  "models": [
+    {
+      "name": "qwen2.5-coder-14b",
+      "llm_model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "llm_base_url": "http://localhost:8000/v1",
+      "llm_api_key": "EMPTY"
+    },
+    {
+      "name": "deepseek-coder-6.7b",
+      "llm_model": "deepseek-ai/deepseek-coder-6.7b-instruct",
+      "llm_base_url": "http://localhost:8001/v1",
+      "llm_api_key": "EMPTY"
+    },
+    {
+      "name": "starcoder2-15b",
+      "llm_model": "bigcode/starcoder2-15b-instruct-v0.1",
+      "llm_base_url": "http://localhost:8002/v1",
+      "llm_api_key": "EMPTY"
+    }
+  ]
+}
