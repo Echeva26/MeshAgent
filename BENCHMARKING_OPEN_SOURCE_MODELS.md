@@ -17,15 +17,17 @@ The runner wraps these existing tests and app entrypoints:
 - `scripts/test_retrieval.py --app app-malt`
 - `scripts/test_retrieval.py --app app-CRG`
 - `scripts/test_retrieval.py --app app-traffic-analysis`
-- `app-malt/full_cot_with_tools.py`
-- `app-CRG/full_cot_with_tools.py`
-- `app-traffic-analysis/full_cot_with_tools.py`
+- `app-malt/full_cot_with_tools.py`, through `scripts/run_app_prompts_resilient.py`
+- `app-CRG/full_cot_with_tools.py`, through `scripts/run_app_prompts_resilient.py`
+- `app-traffic-analysis/full_cot_with_tools.py`, through `scripts/run_app_prompts_resilient.py`
 
 Each wrapped test is executed in a separate subprocess with model-specific environment variables:
 
 - `LLM_MODEL`
 - `LLM_BASE_URL`
 - `LLM_API_KEY`
+
+The app wrappers intentionally do not edit the legacy app scripts. They parse the legacy `main()` prompt list, then call the existing `userQuery([prompt])` one prompt at a time. If one prompt raises an exception, the wrapper records it and continues with the next prompt. This is useful for models such as Mistral that may fail early on one prompt but can still produce meaningful results on later prompts.
 
 ## Requirements
 
@@ -161,12 +163,17 @@ The runner parses these values from the existing test output:
 - `accuracy_skipped_count`
 - `pass_count`
 - `fail_count`
+- `prompt_exception_count`
 - `unsupported_count`
 - process `returncode`
 - `duration_seconds`
 - timeout status
 
 This keeps the old tests untouched while still producing benchmark-friendly summaries.
+
+For app tests, `returncode=1` means at least one prompt raised an exception, but the resilient wrapper still attempts the remaining prompts. Use `query_count`, `accuracy_count`, `accuracy_mean`, `fail_count`, and `prompt_exception_count` to compare model behavior.
+
+For `smoke_vllm`, the benchmark now validates that stdout contains `vLLM OK`. This prevents a model from being marked as healthy merely because the old smoke script exited with code `0` while printing an unrelated answer.
 
 ## Notes
 

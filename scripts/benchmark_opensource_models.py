@@ -26,6 +26,7 @@ class BenchmarkTest:
     command: list[str]
     cwd: Path
     requires_llm: bool = True
+    expected_stdout_contains: str | None = None
 
 
 BENCHMARK_TESTS = {
@@ -39,6 +40,7 @@ BENCHMARK_TESTS = {
         name="smoke_vllm",
         command=[sys.executable, str(REPO_ROOT / "scripts" / "test_vllm.py")],
         cwd=REPO_ROOT,
+        expected_stdout_contains="vLLM OK",
     ),
     "retrieval_app_malt": BenchmarkTest(
         name="retrieval_app_malt",
@@ -75,18 +77,33 @@ BENCHMARK_TESTS = {
     ),
     "app_malt_full": BenchmarkTest(
         name="app_malt_full",
-        command=[sys.executable, "full_cot_with_tools.py"],
-        cwd=REPO_ROOT / "app-malt",
+        command=[
+            sys.executable,
+            str(REPO_ROOT / "scripts" / "run_app_prompts_resilient.py"),
+            "--app",
+            "app-malt",
+        ],
+        cwd=REPO_ROOT,
     ),
     "app_crg_full": BenchmarkTest(
         name="app_crg_full",
-        command=[sys.executable, "full_cot_with_tools.py"],
-        cwd=REPO_ROOT / "app-CRG",
+        command=[
+            sys.executable,
+            str(REPO_ROOT / "scripts" / "run_app_prompts_resilient.py"),
+            "--app",
+            "app-CRG",
+        ],
+        cwd=REPO_ROOT,
     ),
     "app_traffic_analysis_full": BenchmarkTest(
         name="app_traffic_analysis_full",
-        command=[sys.executable, "full_cot_with_tools.py"],
-        cwd=REPO_ROOT / "app-traffic-analysis",
+        command=[
+            sys.executable,
+            str(REPO_ROOT / "scripts" / "run_app_prompts_resilient.py"),
+            "--app",
+            "app-traffic-analysis",
+        ],
+        cwd=REPO_ROOT,
     ),
 }
 
@@ -292,6 +309,7 @@ def parse_metrics(output: str) -> dict[str, Any]:
         "accuracy_skipped_count": skipped_accuracy,
         "pass_count": len(re.findall(r"\bPass the test!\b", output)),
         "fail_count": len(re.findall(r"\bFail the test\b", output)),
+        "prompt_exception_count": len(re.findall(r"RESILIENT_PROMPT_EXCEPTION", output)),
         "unsupported_count": len(re.findall(r"Un-support ground truth|Skip: no golden answer", output)),
         "query_count": len(re.findall(r"^Query:\s", output, flags=re.MULTILINE)),
     }
@@ -484,10 +502,16 @@ def run_test(
     ended_at = datetime.now(timezone.utc).isoformat()
     combined_output = f"{stdout}\n{stderr}"
     metrics = parse_metrics(combined_output)
+    validation_errors = []
+    if test.expected_stdout_contains and test.expected_stdout_contains not in stdout:
+        validation_errors.append(
+            f"stdout does not contain expected text: {test.expected_stdout_contains!r}"
+        )
 
     (test_dir / "stdout.txt").write_text(stdout, encoding="utf-8")
     (test_dir / "stderr.txt").write_text(stderr, encoding="utf-8")
 
+    success = returncode == 0 and not timed_out and not validation_errors
     result = {
         "model_name": model["name"],
         "llm_model": model["llm_model"],
@@ -501,7 +525,8 @@ def run_test(
         "duration_seconds": duration_seconds,
         "returncode": returncode,
         "timed_out": timed_out,
-        "success": returncode == 0 and not timed_out,
+        "success": success,
+        "validation_errors": validation_errors,
         "metrics": metrics,
         "stdout_path": str(test_dir / "stdout.txt"),
         "stderr_path": str(test_dir / "stderr.txt"),
@@ -529,7 +554,9 @@ def write_summary(run_dir: Path, results: list[dict[str, Any]]) -> None:
         "accuracy_skipped_count",
         "pass_count",
         "fail_count",
+        "prompt_exception_count",
         "unsupported_count",
+        "validation_errors",
         "stdout_path",
         "stderr_path",
     ]
@@ -553,7 +580,9 @@ def write_summary(run_dir: Path, results: list[dict[str, Any]]) -> None:
                     "accuracy_skipped_count": metrics["accuracy_skipped_count"],
                     "pass_count": metrics["pass_count"],
                     "fail_count": metrics["fail_count"],
+                    "prompt_exception_count": metrics["prompt_exception_count"],
                     "unsupported_count": metrics["unsupported_count"],
+                    "validation_errors": "; ".join(result.get("validation_errors", [])),
                     "stdout_path": result["stdout_path"],
                     "stderr_path": result["stderr_path"],
                 }
