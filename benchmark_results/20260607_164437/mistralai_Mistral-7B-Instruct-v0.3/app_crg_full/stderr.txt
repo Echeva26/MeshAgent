@@ -1,0 +1,24 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+Loading weights:   0%|                                                                                                                                    | 0/103 [00:00<?, ?it/s]
+Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 103/103 [00:00<00:00, 9741.00it/s]
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-CRG/full_cot_with_tools.py", line 277, in userQuery
+    if first_step_ret['type'] == 'graph':
+       ~~~~~~~~~~~~~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-CRG/full_cot_with_tools.py", line 277, in userQuery
+    if first_step_ret['type'] == 'graph':
+       ~~~~~~~~~~~~~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+Exception ignored in: <function QdrantClient.__del__ at 0xea5ca2f75bc0>
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/.venv/lib/python3.12/site-packages/qdrant_client/qdrant_client.py", line 169, in __del__
+  File "/home/jovyan/MeshAgent/.venv/lib/python3.12/site-packages/qdrant_client/qdrant_client.py", line 178, in close
+  File "/home/jovyan/MeshAgent/.venv/lib/python3.12/site-packages/qdrant_client/local/qdrant_local.py", line 85, in close
+ImportError: sys.meta_path is None, Python is likely shutting down

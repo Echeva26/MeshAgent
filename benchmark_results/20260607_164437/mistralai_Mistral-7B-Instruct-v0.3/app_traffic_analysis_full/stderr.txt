@@ -1,0 +1,89 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+Loading weights:   0%|                                                                                                                                    | 0/103 [00:00<?, ?it/s]
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 103/103 [00:00<00:00, 10627.90it/s]
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 325, in userQuery
+    if second_step_ret['type'] == 'graph':
+       ~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/jovyan/MeshAgent/.venv/lib/python3.12/site-packages/networkx/classes/graph.py", line 533, in __getitem__
+    return self.adj[n]
+           ~~~~~~~~^^^
+  File "/home/jovyan/MeshAgent/.venv/lib/python3.12/site-packages/networkx/classes/coreviews.py", line 82, in __getitem__
+    return AtlasView(self._atlas[name])
+                     ~~~~~~~~~~~^^^^^^
+KeyError: 'type'
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/scripts/run_app_prompts_resilient.py", line 102, in main
+    module.userQuery([prompt])
+  File "/home/jovyan/MeshAgent/app-traffic-analysis/full_cot_with_tools.py", line 240, in userQuery
+    raise SystemExit('Un-support ground truth for the current prompt.')
+SystemExit: Un-support ground truth for the current prompt.
+Exception ignored in: <function QdrantClient.__del__ at 0xfa9995773060>
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/.venv/lib/python3.12/site-packages/qdrant_client/qdrant_client.py", line 169, in __del__
+  File "/home/jovyan/MeshAgent/.venv/lib/python3.12/site-packages/qdrant_client/qdrant_client.py", line 178, in close
+  File "/home/jovyan/MeshAgent/.venv/lib/python3.12/site-packages/qdrant_client/local/qdrant_local.py", line 85, in close
+ImportError: sys.meta_path is None, Python is likely shutting down

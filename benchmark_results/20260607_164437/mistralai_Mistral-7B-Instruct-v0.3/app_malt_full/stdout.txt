@@ -1,0 +1,1063 @@
+RESILIENT_APP_START {"app": "app-malt", "script": "full_cot_with_tools.py", "prompt_count": 9}
+RESILIENT_PROMPT_START {"index": 1, "total": 9, "query": "What is the total capacity of all the ports of the packet switch ju1.a1.m1.s2c1? Return only the number"}
+Query:  What is the total capacity of all the ports of the packet switch ju1.a1.m1.s2c1? Return only the number
+Constraints:  Each PORT node has an attribute 'physical_capacity_bps' When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. Each node can have other attributes depending on its type. The graph is directed and each node has a 'name' attribute to represent itself. When adding new nodes, you should also add edges based on their relationship with existing nodes. When creating a new graph, need to filter nodes and edges with attributes from the original graph.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify the node 'ju1.a1.m1.s2c1' in the network topology.
+
+Code generated:  def process_graph(graph_data):
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            switch_loc = node[1]['packet_switch_attr']['switch_loc']
+            break
+
+    capacity = sum(edge[1]['physical_capacity_bps'] for edge in graph_data.edges(source=switch_loc, data=True) if edge[2]['type'] == 'RK_CONTAINS')
+
+    return_object = {'type': 'number', 'data': capacity}
+    return return_object
+Fail due to errors: KeyError: Exception in line: 4. Message: 'packet_switch_attr'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            if 'packet_switch_attr' in node[1]:
+                switch_loc = node[1]['packet_switch_attr']['switch_loc']
+                break
+
+    if switch_loc:
+        capacity = sum(edge[1]['physical_capacity_bps'] for edge in graph_data.edges(source=switch_loc, data=True) if edge[2]['type'] == 'RK_CONTAINS')
+        return_object = {'type': 'number', 'data': capacity}
+    else:
+        return_object = {'type': 'string', 'data': 'No switch location found for the given packet switch'}
+    return return_object
+Fail due to errors: UnboundLocalError: Exception in line: 8. Message: cannot access local variable 'switch_loc' where it is not associated with a value
+================= Error reduce: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    switch_loc = None
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            switch_loc = node[1]['packet_switch_attr']['switch_loc']
+            break
+
+    if switch_loc is None:
+        return_object = {'type': 'error', 'data': 'Packet switch not found'}
+        return return_object
+
+    capacity = sum(edge[1]['physical_capacity_bps'] for edge in graph_data.edges(source=switch_loc, data=True) if edge[2]['type'] == 'RK_CONTAINS')
+
+    return_object = {'type': 'number', 'data': capacity}
+    return return_object
+Fail due to errors: KeyError: Exception in line: 5. Message: 'packet_switch_attr'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            if 'packet_switch_attr' in node[1]:
+                switch_loc = node[1]['packet_switch_attr']['switch_loc']
+                break
+
+    if switch_loc:
+        capacity = sum(edge[1]['physical_capacity_bps'] for edge in graph_data.edges(source=switch_loc, data=True) if edge[2]['type'] == 'RK_CONTAINS')
+        return_object = {'type': 'number', 'data': capacity}
+    else:
+        return_object = {'type': 'string', 'data': 'No switch location found for the given packet switch'}
+    return return_object
+Fail due to errors: UnboundLocalError: Exception in line: 8. Message: cannot access local variable 'switch_loc' where it is not associated with a value
+Fail the test, the code cannot run.
+Fail the test, prompt raised an exception.
+RESILIENT_PROMPT_EXCEPTION {"index": 1, "query": "What is the total capacity of all the ports of the packet switch ju1.a1.m1.s2c1? Return only the number", "exception_type": "TypeError", "exception": "'NoneType' object is not subscriptable"}
+RESILIENT_PROMPT_END {"index": 1, "failures": 1, "completed": 0}
+RESILIENT_PROMPT_START {"index": 2, "total": 9, "query": "How many packet switches have more capacity than ju1.a2.m3.s2c3? Can you give me an example of such a switch? Return the text"}
+Query:  How many packet switches have more capacity than ju1.a2.m3.s2c3? Can you give me an example of such a switch? Return the text
+Constraints:  packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Each PORT node has an attribute 'physical_capacity_bps' 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. Each node can have other attributes depending on its type. The graph is directed and each node has a 'name' attribute to represent itself. When update a graph, always create a graph copy, do not modify the input graph. When adding new nodes, you should also add edges based on their relationship with existing nodes.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify the node ju1.a2.m3.s2c3 and its type, as well as its capacity.
+
+Code generated:  def process_graph(graph_data):
+    graph = graph_data.copy()
+    ju1_a2_m3_s2c3 = next((node for node in graph.nodes() if node[0] == 'ju1.a2.m3.s2c3'), None)
+
+    if ju1_a2_m3_s2c3:
+        capacity = sum(int(node_data['packet_switch_attr']['physical_capacity_bps']) for edge in graph.in_edges(ju1_a2_m3_s2c3) if edge[1] == 'RK_CONTAINS')
+        node_type = ju1_a2_m3_s2c3[1]['type']
+
+        return {'type': 'text', 'data': f'The switch ju1.a2.m3.s2c3 has a capacity of {capacity} bps and its type is {", ".join(node_type)}.'}
+
+    return {'type': 'text', 'data': 'The node ju1.a2.m3.s2c3 was not found in the graph.'}
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Traverse through the network structure to find all nodes with the type EK_PACKET_SWITCH.
+
+Code generated:  def process_graph(graph_data):
+    graph = graph_data.copy()
+    more_capacity_switches = []
+    ju1_a2_m3_s2c3_capacity = None
+    ju1_a2_m3_s2c3 = next((node for node in graph.nodes() if node[0] == 'ju1.a2.m3.s2c3'), None)
+
+    if ju1_a2_m3_s2c3:
+        ju1_a2_m3_s2c3_capacity = sum(int(node_data['packet_switch_attr']['physical_capacity_bps']) for edge in graph.in_edges(ju1_a2_m3_s2c3) if edge[1] == 'RK_CONTAINS')
+
+    for node in graph.nodes():
+        if 'EK_PACKET_SWITCH' in node[1]['type']:
+            node_capacity = sum(int(node_data['packet_switch_attr']['physical_capacity_bps']) for edge in graph.in_edges(node) if edge[1] == 'RK_CONTAINS')
+            if node_capacity > ju1_a2_m3_s2c3_capacity if ju1_a2_m3_s2c3 else node_capacity > 0:
+                more_capacity_switches.append({'name': node[0], 'capacity': node_capacity})
+
+    if more_capacity_switches:
+        example_switch = more_capacity_switches[0]
+        return {'type': 'text', 'data': f'There are {len(more_capacity_switches)} packet switches with more capacity than ju1.a2.m3.s2c3. An example is {example_switch["name"]} with a capacity of {example_switch["capacity"]} bps.'}
+    else:
+        return {'type': 'text', 'data': 'No packet switches have more capacity than ju1.a2.m3.s2c3.'}
+Fail due to errors: TypeError: Exception in line: 11. Message: string indices must be integers, not 'str'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    graph = graph_data.copy()
+    more_capacity_switches = []
+    ju1_a2_m3_s2c3_capacity = None
+    ju1_a2_m3_s2c3 = next((node for node in graph.nodes() if node[0] == 'ju1.a2.m3.s2c3'), None)
+
+    if ju1_a2_m3_s2c3:
+        ju1_a2_m3_s2c3_capacity = sum(int(node_data['packet_switch_attr']['physical_capacity_bps']) for edge in graph.in_edges(ju1_a2_m3_s2c3) if edge[1] == 'RK_CONTAINS')
+
+    for node in graph.nodes():
+        if 'EK_PACKET_SWITCH' in node[1]['type']:
+            node_capacity = sum(int(node_data['packet_switch_attr']['physical_capacity_bps']) for edge in graph.in_edges(node) if edge[1] == 'RK_CONTAINS')
+            if node_capacity > ju1_a2_m3_s2c3_capacity if ju1_a2_m3_s2c3 else node_capacity > 0:
+                more_capacity_switches.append({'name': node[0], 'capacity': node_capacity})
+
+    if more_capacity_switches:
+        example_switch = more_capacity_switches[0]
+        return {'type': 'text', 'data': f'There are {len(more_capacity_switches)} packet switches with more capacity than ju1.a2.m3.s2c3. An example is {example_switch["name"]} with a capacity of {example_switch["capacity"]} bps.'}
+    else:
+        return {'type': 'text', 'data': 'No packet switches have more capacity than ju1.a2.m3.s2c3.'}
+Fail due to errors: TypeError: Exception in line: 11. Message: string indices must be integers, not 'str'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    graph = graph_data.copy()
+    more_capacity_switches = []
+    ju1_a2_m3_s2c3_capacity = None
+    ju1_a2_m3_s2c3 = next((node for node in graph.nodes() if node[0] == 'ju1.a2.m3.s2c3'), None)
+
+    if ju1_a2_m3_s2c3:
+        ju1_a2_m3_s2c3_capacity = sum(int(node_data['packet_switch_attr']['physical_capacity_bps']) for edge in graph.in_edges(ju1_a2_m3_s2c3) if edge[1] == 'RK_CONTAINS')
+
+    for node in graph.nodes():
+        if 'EK_PACKET_SWITCH' in node[1]['type']:
+            node_capacity = sum(int(node_data['packet_switch_attr']['physical_capacity_bps']) for edge in graph.in_edges(node) if edge[1] == 'RK_CONTAINS')
+            if node_capacity > ju1_a2_m3_s2c3_capacity if ju1_a2_m3_s2c3 else node_capacity > 0:
+                more_capacity_switches.append({'name': node[0], 'capacity': node_capacity})
+
+    if more_capacity_switches:
+        example_switch = more_capacity_switches[0]
+        return {'type': 'text', 'data': f'There are {len(more_capacity_switches)} packet switches with more capacity than ju1.a2.m3.s2c3. An example is {example_switch["name"]} with a capacity of {example_switch["capacity"]} bps.'}
+    else:
+        return {'type': 'text', 'data': 'No packet switches have more capacity than ju1.a2.m3.s2c3.'}
+Fail due to errors: TypeError: Exception in line: 11. Message: string indices must be integers, not 'str'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    graph = graph_data.copy()
+    more_capacity_switches = []
+    ju1_a2_m3_s2c3_capacity = None
+    ju1_a2_m3_s2c3 = next((node for node in graph.nodes() if node[0] == 'ju1.a2.m3.s2c3'), None)
+
+    if ju1_a2_m3_s2c3:
+        ju1_a2_m3_s2c3_capacity = sum(int(node_data['packet_switch_attr']['physical_capacity_bps']) for edge in graph.in_edges(ju1_a2_m3_s2c3) if edge[1] == 'RK_CONTAINS')
+
+    for node in graph.nodes():
+        if 'EK_PACKET_SWITCH' in node[1]['type']:
+            node_capacity = sum(int(node_data['packet_switch_attr']['physical_capacity_bps']) for edge in graph.in_edges(node) if edge[1] == 'RK_CONTAINS')
+            if node_capacity > ju1_a2_m3_s2c3_capacity if ju1_a2_m3_s2c3 else node_capacity > 0:
+                more_capacity_switches.append({'name': node[0], 'capacity': node_capacity})
+
+    if more_capacity_switches:
+        example_switch = more_capacity_switches[0]
+        return {'type': 'text', 'data': f'There are {len(more_capacity_switches)} packet switches with more capacity than ju1.a2.m3.s2c3. An example is {example_switch["name"]} with a capacity of {example_switch["capacity"]} bps.'}
+    else:
+        return {'type': 'text', 'data': 'No packet switches have more capacity than ju1.a2.m3.s2c3.'}
+Fail due to errors: TypeError: Exception in line: 11. Message: string indices must be integers, not 'str'
+Fail the test, the code cannot run.
+Fail the test, prompt raised an exception.
+RESILIENT_PROMPT_EXCEPTION {"index": 2, "query": "How many packet switches have more capacity than ju1.a2.m3.s2c3? Can you give me an example of such a switch? Return the text", "exception_type": "TypeError", "exception": "'NoneType' object is not subscriptable"}
+RESILIENT_PROMPT_END {"index": 2, "failures": 2, "completed": 0}
+RESILIENT_PROMPT_START {"index": 3, "total": 9, "query": "How many packet switches are there in a typical chassis? Can you find me an example of a chassis with more or fewer switches than normal?"}
+Query:  How many packet switches are there in a typical chassis? Can you find me an example of a chassis with more or fewer switches than normal?
+Constraints:  Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. Each PORT node has an attribute 'physical_capacity_bps' Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Each node can have other attributes depending on its type. When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. The graph is directed and each node has a 'name' attribute to represent itself. When adding new nodes, you should also add edges based on their relationship with existing nodes. When creating a new graph, need to filter nodes and edges with attributes from the original graph.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify the type of the chassis node by checking its 'type' attribute for the presence of EK_CHASSIS.
+
+Code generated:  def process_graph(graph_data):
+    chassis_nodes = [node for node in graph_data.nodes(data=True) if 'EK_CHASSIS' in node[1]['type']]
+    chassis_data = {'type': 'list', 'data': [node[0] for node in chassis_nodes]}
+
+    chassis_switch_count = defaultdict(int)
+    for node in chassis_nodes:
+        for edge in graph_data.in_edges(node[0], data=True):
+            if edge[2]['type'] == 'RK_CONTAINS' and edge[1]['type'][0] == 'EK_PACKET_SWITCH':
+                chassis_switch_count[edge[1][0]] += 1
+
+    max_switch_count = max(chassis_switch_count.values())
+    min_switch_count = min(chassis_switch_count.values())
+
+    high_switch_chassis = {}
+    low_switch_chassis = {}
+
+    for node, switch_count in chassis_switch_count.items():
+        if switch_count == max_switch_count:
+            high_switch_chassis[node] = switch_count
+        elif switch_count == min_switch_count:
+            low_switch_chassis[node] = switch_count
+
+    high_chassis_data = {'type': 'text', 'data': f'Chassis with the maximum number of packet switches: {", ".join(high_switch_chassis.keys())}'}
+    low_chassis_data = {'type': 'text', 'data': f'Chassis with the minimum number of packet switches: {", ".join(low_switch_chassis.keys())}'}
+
+    return_object = {'type': 'table', 'data': [chassis_data['data'], high_chassis_data, low_chassis_data]}
+Fail due to errors: NameError: Exception in line: 5. Message: name 'defaultdict' is not defined
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    # ... (rest of the code)
+
+    chassis_switch_count = defaultdict(int)
+    # ... (rest of the code)
+Fail due to errors: NameError: Exception in line: 4. Message: name 'defaultdict' is not defined
+================= Error reduce: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    # ... (rest of the code)
+
+    chassis_switch_count = defaultdict(int)
+    # ... (rest of the code)
+Fail due to errors: NameError: Exception in line: 4. Message: name 'defaultdict' is not defined
+================= Error reduce: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    # ... (rest of the code)
+
+    chassis_switch_count = defaultdict(int)
+    # ... (rest of the code)
+Fail due to errors: NameError: Exception in line: 4. Message: name 'defaultdict' is not defined
+Fail the test, the code cannot run.
+Fail the test, prompt raised an exception.
+RESILIENT_PROMPT_EXCEPTION {"index": 3, "query": "How many packet switches are there in a typical chassis? Can you find me an example of a chassis with more or fewer switches than normal?", "exception_type": "TypeError", "exception": "'NoneType' object is not subscriptable"}
+RESILIENT_PROMPT_END {"index": 3, "failures": 3, "completed": 0}
+RESILIENT_PROMPT_START {"index": 4, "total": 9, "query": "How many ports in the graph? What type of children nodes does it have (count the average number)? What type of parent nodes does it have (count the average number)?How many agg blocks are there in a common superblock? Also find the min number and max number of agg blocks."}
+Query:  How many ports in the graph? What type of children nodes does it have (count the average number)? What type of parent nodes does it have (count the average number)?How many agg blocks are there in a common superblock? Also find the min number and max number of agg blocks.
+Constraints:  The graph is directed and each node has a 'name' attribute to represent itself. When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Each PORT node has an attribute 'physical_capacity_bps' Each node can have other attributes depending on its type. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. When creating a new graph, need to filter nodes and edges with attributes from the original graph. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. When adding new nodes, you should also add edges based on their relationship with existing nodes. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'.
+Tools:  no tools available
+Skip: no golden answer for this prompt (exact string key mismatch).
+=========Current query process is done!=========
+{'query': 'How many ports in the graph? What type of children nodes does it have (count the average number)? What type of parent nodes does it have (count the average number)?How many agg blocks are there in a common superblock? Also find the min number and max number of agg blocks.'}
+Total test times:  1
+Testing accuracy:  0.0
+RESILIENT_PROMPT_END {"index": 4, "failures": 3, "completed": 1}
+RESILIENT_PROMPT_START {"index": 5, "total": 9, "query": "Does the graph have any information about power usage or physical location of the switches? Return 'Yes' or 'No'."}
+Query:  Does the graph have any information about power usage or physical location of the switches? Return 'Yes' or 'No'.
+Constraints:  The graph is directed and each node has a 'name' attribute to represent itself. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. When update a graph, always create a graph copy, do not modify the input graph. When creating a new graph, need to filter nodes and edges with attributes from the original graph. To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. You should check relationship based on edge, check name based on node attribute. When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT Each node can have other attributes depending on its type. Each PORT node has an attribute 'physical_capacity_bps' When adding new nodes, you should also add edges based on their relationship with existing nodes.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify the types of nodes in the graph.
+
+Code generated:  def process_graph(graph_data):
+    node_types = set()
+    for node in graph_data.nodes():
+        if 'type' in node[1] and node[1]['type'] in ['CHASSIS', 'PACKET_SWITCH', 'JUPITER', 'SUPERBLOCK', 'AGG_BLOCK']:
+            node_types.add(node[1]['type'])
+    return {'type': 'list', 'data': list(node_types)}
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Check if any of the node types (EK_SUPERBLOCK, EK_CHASSIS, EK_RACK, EK_AGG_BLOCK, EK_JUPITER, EK_PORT, EK_SPINEBLOCK, EK_PACKET_SWITCH, EK_CONTROL_POINT, EK_CONTROL_DOMAIN) have attributes related to power usage or physical location.
+
+Code generated:  def process_graph(graph_data):
+    power_location_nodes = set()
+    power_location_attributes = {'switch_loc', 'physical_capacity_bps'}
+
+    for node in graph_data.nodes():
+        if 'type' in node[1] and node[1]['type'] in ['CHASSIS', 'PACKET_SWITCH', 'JUPITER', 'SUPERBLOCK', 'AGG_BLOCK', 'PORT', 'CONTROL_POINT', 'CONTROL_DOMAIN']:
+            if any(attr in node[1] for attr in power_location_attributes):
+                power_location_nodes.add(node[0])
+
+    return {'type': 'boolean', 'data': len(power_location_nodes) > 0}
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  If such attributes are found, return 'Yes'. If not, return 'No'.
+'
+Code generated:  def process_graph(graph_data):
+    power_location_nodes = set()
+    power_location_attributes = {'switch_loc', 'physical_capacity_bps'}
+
+    for node in graph_data.nodes():
+        if 'type' in node[1] and node[1]['type'] in ['CHASSIS', 'PACKET_SWITCH', 'JUPITER', 'SUPERBLOCK', 'AGG_BLOCK', 'PORT', 'CONTROL_POINT', 'CONTROL_DOMAIN']:
+            if any(attr in node[1] for attr in power_location_attributes):
+                power_location_nodes.add(node[0])
+
+    for edge in graph_data.edges():
+        if edge[2]['type'] in ['RK_CONTAINS', 'RK_CONTROL']:
+            if edge[0] in power_location_nodes and edge[1] in power_location_nodes:
+                power_location_nodes.add((edge[2]['parent'] if 'parent' in edge[2] else edge[0]) if edge[0] == edge[2]['child'] else edge[2]['child'])
+
+    return {'type': 'boolean', 'data': len(power_location_nodes) > 0}
+Fail due to errors: IndexError: Exception in line: 11. Message: tuple index out of range
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    power_location_nodes = set()
+    power_location_attributes = {'switch_loc', 'physical_capacity_bps'}
+
+    new_graph = nx.Graph()
+    new_graph.add_nodes_from(graph_data.nodes())
+
+    for node in new_graph.nodes():
+        if 'type' in node[1] and node[1]['type'] in ['CHASSIS', 'PACKET_SWITCH', 'JUPITER', 'SUPERBLOCK', 'AGG_BLOCK', 'PORT', 'CONTROL_POINT', 'CONTROL_DOMAIN']:
+            if any(attr in node[1] for attr in power_location_attributes):
+                power_location_nodes.add(node[0])
+
+    for edge in graph_data.edges():
+        if edge[2] is not None and (edge[2]['type'] in ['RK_CONTAINS', 'RK_CONTROL']):
+            if edge[0] in power_location_nodes and edge[1] in power_location_nodes:
+                if 'parent' in edge[2]:
+                    power_location_nodes.add(edge[2]['parent'])
+                else:
+                    power_location_nodes.add(edge[2]['child'])
+
+    new_graph.remove_nodes_from(power_location_nodes)
+
+    return {'type': 'boolean', 'data': bool(new_graph.number_of_nodes())}
+Fail due to errors: IndexError: Exception in line: 14. Message: tuple index out of range
+================= Error reduce: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    power_location_nodes = set()
+    power_location_attributes = {'switch_loc', 'physical_capacity_bps'}
+
+    for node in graph_data.nodes():
+        if 'type' in node[1] and node[1]['type'] in ['CHASSIS', 'PACKET_SWITCH', 'JUPITER', 'SUPERBLOCK', 'AGG_BLOCK', 'PORT', 'CONTROL_POINT', 'CONTROL_DOMAIN']:
+            if any(attr in node[1] for attr in power_location_attributes):
+                power_location_nodes.add(node[0])
+
+    for edge in graph_data.edges():
+        if edge[2] and 'type' in edge[2] and (edge[2]['type'] in ['RK_CONTAINS', 'RK_CONTROL']):
+            if edge[0] in power_location_nodes and edge[1] in power_location_nodes:
+                if 'parent' in edge[2]:
+                    power_location_nodes.add(edge[2]['parent'])
+                else:
+                    power_location_nodes.add(edge[0])
+
+    return {'type': 'boolean', 'data': len(power_location_nodes) > 0}
+Fail due to errors: IndexError: Exception in line: 11. Message: tuple index out of range
+================= Error reduce: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    power_location_nodes = set()
+    power_location_attributes = {'switch_loc', 'physical_capacity_bps'}
+
+    for node in graph_data.nodes():
+        if 'type' in node[1] and node[1]['type'] in ['CHASSIS', 'PACKET_SWITCH', 'JUPITER', 'SUPERBLOCK', 'AGG_BLOCK', 'PORT', 'CONTROL_POINT', 'CONTROL_DOMAIN']:
+            if any(attr in node[1] for attr in power_location_attributes):
+                power_location_nodes.add(node[0])
+
+    for edge in graph_data.edges():
+        if edge[2] is not None and (edge[2]['type'] in ['RK_CONTAINS', 'RK_CONTROL']):
+            if edge[0] in power_location_nodes and edge[1] in power_location_nodes:
+                power_location_nodes.add((edge[2]['parent'] if 'parent' in edge[2] else edge[0]) if edge[0] == edge[2]['child'] else edge[2]['child'])
+
+    return {'type': 'boolean', 'data': len(power_location_nodes) > 0}
+Fail due to errors: IndexError: Exception in line: 11. Message: tuple index out of range
+Fail the test, the code cannot run.
+Fail the test, prompt raised an exception.
+RESILIENT_PROMPT_EXCEPTION {"index": 5, "query": "Does the graph have any information about power usage or physical location of the switches? Return 'Yes' or 'No'.", "exception_type": "TypeError", "exception": "'NoneType' object is not subscriptable"}
+RESILIENT_PROMPT_END {"index": 5, "failures": 4, "completed": 1}
+RESILIENT_PROMPT_START {"index": 6, "total": 9, "query": "What are the other ports on the switch that has the port ju1.a1.m1.s2c1.p10? Return a list."}
+Query:  What are the other ports on the switch that has the port ju1.a1.m1.s2c1.p10? Return a list.
+Constraints:  For example, a PORT node name is ju1.a1.m1.s2c1.p3 Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT Each PORT node has an attribute 'physical_capacity_bps' To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. The graph is directed and each node has a 'name' attribute to represent itself. Each node can have other attributes depending on its type. You should check relationship based on edge, check name based on node attribute. When creating a new graph, need to filter nodes and edges with attributes from the original graph.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify the type of the switch that contains port ju1.a1.m1.s2c1.p10. This can be done by traversing the network structure from the given port node, following the RK_CONTAINS edges, until we reach a node with a type that includes EK_PACKET_SWITCH.
+
+
+Code generated:  def process_graph(graph_data):
+    switch_type = []
+    port_node = nx.Node(graph_data, ju1.a1.m1.s2c1.p10)
+    queue = [port_node]
+
+    while queue:
+        current_node = queue.pop(0)
+        for neighbor in current_node.successors():
+            if nx.get_edge_data(graph_data, (current_node, neighbor))['type'] == 'RK_CONTAINS':
+                if nx.get_node_attributes(graph_data, 'type')[neighbor] and 'EK_PACKET_SWITCH' in nx.get_node_attributes(graph_data, 'type')[neighbor]:
+                    switch_type.append(neighbor)
+                    break
+        queue.append(current_node)
+
+    if switch_type:
+        return {'type': 'list', 'data': switch_type}
+    else:
+        return {'type': 'text', 'data': 'No other switches found.'}
+Fail due to errors: AttributeError: Exception in line: 62. Message: module 'networkx' has no attribute 'Node'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    switch_type = []
+    port_node = graph_data.nodes[ju1.a1.m1.s2c1.p10]
+    queue = [port_node]
+
+    while queue:
+        current_node = queue.pop(0)
+        for neighbor in current_node.successors():
+            if nx.has_edge(graph_data, current_node, neighbor) and nx.get_edge_data(graph_data, (current_node, neighbor))['type'] == 'RK_CONTAINS':
+                if 'type' in graph_data.nodes[neighbor] and 'EK_PACKET_SWITCH' in graph_data.nodes[neighbor]['type']:
+                    switch_type.append(neighbor)
+                    break
+        queue.append(current_node)
+
+    if switch_type:
+        return {'type': 'list', 'data': list(map(lambda x: x[0], switch_type))}
+    else:
+        return {'type': 'text', 'data': 'No other switches found.'}
+Fail due to errors: NameError: Exception in line: 3. Message: name 'ju1' is not defined
+================= Error reduce: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    switch_type = []
+    port_node = nx.Node(graph_data, 'ju1.a1.m1.s2c1.p10')
+    queue = [port_node]
+
+    while queue:
+        current_node = queue.pop(0)
+        for neighbor in current_node.successors():
+            if nx.get_edge_data(graph_data, (current_node, neighbor))['type'] == 'RK_CONTAINS':
+                if nx.get_node_attributes(graph_data, 'type')[neighbor] and 'EK_PACKET_SWITCH' in nx.get_node_attributes(graph_data, 'type')[neighbor]:
+                    switch_type.append(neighbor)
+                    break
+        queue.append(current_node)
+
+    if switch_type:
+        return {'type': 'list', 'data': switch_type}
+    else:
+        return {'type': 'text', 'data': 'No other switches found.'}
+Fail due to errors: AttributeError: Exception in line: 62. Message: module 'networkx' has no attribute 'Node'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    switch_type = []
+    port_node = graph_data.nodes[ju1.a1.m1.s2c1.p10]
+    queue = [port_node]
+
+    while queue:
+        current_node = queue.pop(0)
+        for neighbor in current_node.successors():
+            if nx.has_edge(graph_data, current_node, neighbor) and nx.get_edge_data(graph_data, (current_node, neighbor))['type'] == 'RK_CONTAINS':
+                if 'type' in graph_data.nodes[neighbor] and 'EK_PACKET_SWITCH' in graph_data.nodes[neighbor]['type']:
+                    switch_type.append(neighbor)
+                    break
+        queue.append(current_node)
+
+    if switch_type:
+        return {'type': 'list', 'data': list(map(lambda x: x[0], switch_type))}
+    else:
+        return {'type': 'text', 'data': 'No other switches found.'}
+Fail due to errors: NameError: Exception in line: 3. Message: name 'ju1' is not defined
+Fail the test, the code cannot run.
+Fail the test, prompt raised an exception.
+RESILIENT_PROMPT_EXCEPTION {"index": 6, "query": "What are the other ports on the switch that has the port ju1.a1.m1.s2c1.p10? Return a list.", "exception_type": "TypeError", "exception": "'NoneType' object is not subscriptable"}
+RESILIENT_PROMPT_END {"index": 6, "failures": 5, "completed": 1}
+RESILIENT_PROMPT_START {"index": 7, "total": 9, "query": "For each superblock, tell me the numbers of agg blocks, packet switches and ports. Return a list."}
+Query:  For each superblock, tell me the numbers of agg blocks, packet switches and ports. Return a list.
+Constraints:  Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. Each PORT node has an attribute 'physical_capacity_bps' When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. The graph is directed and each node has a 'name' attribute to represent itself. Each node can have other attributes depending on its type. When creating a new graph, need to filter nodes and edges with attributes from the original graph. When adding new nodes, you should also add edges based on their relationship with existing nodes.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify all the superblock nodes in the network.
+
+Code generated:  def process_graph(graph_data):
+    superblocks = [node for node in graph_data.nodes(data=True) if 'EK_SUPERBLOCK' in node[1]['type']]
+    superblock_data = []
+    for superblock in superblocks:
+        agg_blocks = [node for node in graph_data.neighbors(superblock[0]) if RK_CONTAINS in node[1]['type'] and 'EK_AGG_BLOCK' in node[0][1]['type']]
+        packet_switches = [node for node in graph_data.neighbors(superblock[0]) if RK_CONTAINS in node[1]['type'] and 'EK_PACKET_SWITCH' in node[0][1]['type']]
+        ports = [node for node in graph_data.successors(packet_switch, edge[1]) for edge in packet_switches if RK_CONTAINS in edge[1]['type'] and 'EK_PORT' in node[1]['type']]
+        agg_block_count = len(agg_blocks)
+        packet_switch_count = len(packet_switches)
+        port_count = len(ports)
+        total_capacity = sum([node[0]['physical_capacity_bps'] for node in ports])
+        superblock_data.append({
+            'type': 'list',
+            'data': [agg_block_count, packet_switch_count, port_count, total_capacity]
+        })
+    return {
+        'type': 'list',
+        'data': superblock_data
+    }
+Fail due to errors: NameError: Exception in line: 5. Message: name 'RK_CONTAINS' is not defined
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    superblocks = [node for node in graph_data.nodes(data=True) if 'EK_SUPERBLOCK' in node[1]['type']]
+    superblock_data = []
+    for superblock in superblocks:
+        agg_blocks = [node for node in graph_data.neighbors(superblock[0]) if RK_CONTAINS in node[1]['type'] and 'EK_AGG_BLOCK' in node[0][1]['type']]
+        packet_switches = [node for node in graph_data.neighbors(superblock[0]) if RK_CONTAINS in node[1]['type'] and 'EK_PACKET_SWITCH' in node[0][1]['type']]
+        ports = [node for node in graph_data.successors(packet_switch, edge[1]) for edge in packet_switches if RK_CONTAINS in edge[1]['type'] and 'EK_PORT' in node[1]['type']]
+        agg_block_count = len(agg_blocks)
+        packet_switch_count = len(packet_switches)
+        port_count = len(ports)
+        total_capacity = sum([node[0]['physical_capacity_bps'] for node in ports])
+        superblock_data.append({
+            'type': 'list',
+            'data': [agg_block_count, packet_switch_count, port_count, total_capacity]
+        })
+    return {
+        'type': 'list',
+        'data': superblock_data
+    }
+Fail due to errors: NameError: Exception in line: 5. Message: name 'RK_CONTAINS' is not defined
+================= Error reduce: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    superblocks = [node for node in graph_data.nodes(data=True) if 'EK_SUPERBLOCK' in node[1]['type']]
+    superblock_data = []
+    for superblock in superblocks:
+        agg_blocks = [node for node in graph_data.neighbors(superblock[0]) if RK_CONTAINS in node[1]['type'] and 'EK_AGG_BLOCK' in node[0][1]['type']]
+        packet_switches = [node for node in graph_data.neighbors(superblock[0]) if RK_CONTAINS in node[1]['type'] and 'EK_PACKET_SWITCH' in node[0][1]['type']]
+        ports = [node for node in graph_data.successors(packet_switch, edge[1]) for edge in packet_switches if RK_CONTAINS in edge[1]['type'] and 'EK_PORT' in node[1]['type']]
+        agg_block_count = len(agg_blocks)
+        packet_switch_count = len(packet_switches)
+        port_count = len(ports)
+        total_capacity = sum([node[0]['physical_capacity_bps'] for node in ports])
+        superblock_data.append({
+            'type': 'list',
+            'data': [agg_block_count, packet_switch_count, port_count, total_capacity]
+        })
+    return {
+        'type': 'list',
+        'data': superblock_data
+    }
+Fail due to errors: NameError: Exception in line: 5. Message: name 'RK_CONTAINS' is not defined
+================= Error reduce: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    superblocks = [node for node in graph_data.nodes(data=True) if 'EK_SUPERBLOCK' in node[1]['type']]
+    superblock_data = []
+    for superblock in superblocks:
+        agg_blocks = [node for node in graph_data.neighbors(superblock[0]) if RK_CONTAINS in node[1]['type'] and 'EK_AGG_BLOCK' in node[0][1]['type']]
+        packet_switches = [node for node in graph_data.neighbors(superblock[0]) if RK_CONTAINS in node[1]['type'] and 'EK_PACKET_SWITCH' in node[0][1]['type']]
+        ports = [node for node in graph_data.successors(packet_switch, edge[1]) for edge in packet_switches if RK_CONTAINS in edge[1]['type'] and 'EK_PORT' in node[1]['type']]
+        agg_block_count = len(agg_blocks)
+        packet_switch_count = len(packet_switches)
+        port_count = len(ports)
+        total_capacity = sum([node[0]['physical_capacity_bps'] for node in ports])
+        superblock_data.append({
+            'type': 'list',
+            'data': [agg_block_count, packet_switch_count, port_count, total_capacity]
+        })
+    return {
+        'type': 'list',
+        'data': superblock_data
+    }
+Fail due to errors: NameError: Exception in line: 5. Message: name 'RK_CONTAINS' is not defined
+Fail the test, the code cannot run.
+Fail the test, prompt raised an exception.
+RESILIENT_PROMPT_EXCEPTION {"index": 7, "query": "For each superblock, tell me the numbers of agg blocks, packet switches and ports. Return a list.", "exception_type": "TypeError", "exception": "'NoneType' object is not subscriptable"}
+RESILIENT_PROMPT_END {"index": 7, "failures": 6, "completed": 1}
+RESILIENT_PROMPT_START {"index": 8, "total": 9, "query": "Attach an attribute called capacity fraction to each of the port type node in the graph whose value is the fraction of their capacity relative to the total capacity of all ports in that switch. Return the updated graph."}
+Query:  Attach an attribute called capacity fraction to each of the port type node in the graph whose value is the fraction of their capacity relative to the total capacity of all ports in that switch. Return the updated graph.
+Constraints:  Each PORT node has an attribute 'physical_capacity_bps' When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. Each node can have other attributes depending on its type. When adding new nodes, you should also add edges based on their relationship with existing nodes. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. When update a graph, always create a graph copy, do not modify the input graph. For example, a PORT node name is ju1.a1.m1.s2c1.p3 When creating a new graph, need to filter nodes and edges with attributes from the original graph. The graph is directed and each node has a 'name' attribute to represent itself. Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Iterate through each port node in the graph that has a 'type' attribute containing EK_PORT.
+
+
+Code generated:  def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type']:
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            node[1]['capacity_fraction'] = capacity / total_capacity
+            graph.add_node(node[0], **node[1])
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+================= Start verifying invariant constraints =================
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+================= Start self-debugging for verifier errors =================
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+================= Verifier: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1].get('type', []) and 'type' in node[1]:
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            node[1]['capacity_fraction'] = capacity / total_capacity
+            graph.add_node(node[0], **node[1])
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+================= Verifier: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1].get('type', []) and 'type' in node[1]:
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            node[1]['capacity_fraction'] = capacity / total_capacity
+            graph.add_node(node[0], **node[1])
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+================= Verifier: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1].get('type', []) and 'type' in node[1]:
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            node[1]['capacity_fraction'] = capacity / total_capacity
+            graph.add_node(node[0], **node[1])
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+Fail the test, the code cannot pass all verifiers.
+first_step_verify_result:  False
+Step 2:  For each port node, calculate its capacity fraction by dividing its individual capacity by the sum of the capacities of all port nodes in the same switch.
+
+
+Code generated:  def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+    port_capacity = {}
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type']:
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            port_capacity[node[0]] = capacity
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type']:
+            node[1]['capacity_fraction'] = port_capacity[node[0]] / total_capacity
+            graph.add_node(node[0], **node[1])
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+================= Start verifying invariant constraints =================
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+================= Start self-debugging for verifier errors =================
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+================= Verifier: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+    port_capacity = {}
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type'] and 'type' in node[1]:
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            port_capacity[node[0]] = capacity
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type'] and 'type' in node[1]:
+            if node[0] in port_capacity:
+                node[1]['capacity_fraction'] = port_capacity[node[0]] / total_capacity
+                graph.add_node(node[0], **node[1])
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+================= Verifier: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+    port_capacity = {}
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type'] and 'type' in node[1]:
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            port_capacity[node[0]] = capacity
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type'] and 'type' in node[1]:
+            node[1]['capacity_fraction'] = port_capacity[node[0]] / total_capacity if total_capacity > 0 else 0
+            graph.add_node(node[0], **node[1])
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+================= Verifier: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+    port_capacity = {}
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type'] and 'type' in node[1]:
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            port_capacity[node[0]] = capacity
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type'] and 'type' in node[1]:
+            node[1]['capacity_fraction'] = port_capacity[node[0]] / total_capacity if total_capacity > 0 else 0
+            graph.add_node(node[0], **node[1])
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+Fail the test, the code cannot pass all verifiers.
+second_step_verify_result:  False
+Step 3:  Update the port node's attributes by adding a new attribute called 'capacity_fraction' and assigning the calculated value to it. The updated graph now includes the capacity fraction attribute for all port type nodes.
+'
+Code generated:  def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+    port_capacity = {}
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type']:
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            port_capacity[node[0]] = capacity
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type']:
+            node[1]['capacity_fraction'] = port_capacity[node[0]] / total_capacity
+            graph.add_node(node[0], **{**node[1], 'capacity_fraction': node[1]['capacity_fraction']})
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+================= Start verifying invariant constraints =================
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+================= Start self-debugging for verifier errors =================
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+================= Verifier: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+    port_capacity = {}
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1].get('type', []):
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            port_capacity[node[0]] = capacity
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1].get('type', []):
+            node[1]['capacity_fraction'] = port_capacity.get(node[0], 0) / total_capacity if total_capacity > 0 else 0
+            graph.add_node(node[0], **{**node[1], 'capacity_fraction': node[1]['capacity_fraction']})
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+================= Verifier: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+    port_capacity = {}
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1].get('type', []):
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            port_capacity[node[0]] = capacity
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1].get('type', []):
+            node[1]['capacity_fraction'] = port_capacity.get(node[0], 0) / total_capacity if total_capacity > 0 else 0
+            graph.add_node(node[0], **{**node[1], 'capacity_fraction': node[1]['capacity_fraction']})
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+================= Verifier: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+    port_capacity = {}
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1].get('type', []):
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            port_capacity[node[0]] = capacity
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1].get('type', []):
+            node[1]['capacity_fraction'] = port_capacity.get(node[0], 0) / total_capacity if total_capacity > 0 else 0
+            graph.add_node(node[0], **{**node[1], 'capacity_fraction': node[1]['capacity_fraction']})
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+Check failed: verify_node_types failed at node: ju1, there is no node type on it.
+Traceback (most recent call last):
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 29, in evaluate_all
+    check()
+  File "/home/jovyan/MeshAgent/app-malt/error_check.py", line 61, in verify_node_format_and_type
+    raise Exception(f"verify_node_types failed at node: {node}, there is no node type on it.")
+Exception: verify_node_types failed at node: ju1, there is no node type on it.
+
+Verifier RAG extract constraints:  To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN'].
+Fail the test, the code cannot pass all verifiers.
+third_step_verify_result:  False
+def process_graph(graph_data):
+    graph = nx.Graph()
+    total_capacity = 0
+    port_capacity = {}
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type']:
+            capacity = sum(node[1]['physical_capacity_bps'] for edge in graph_data.in_edges(node[0]))
+            total_capacity += capacity
+            port_capacity[node[0]] = capacity
+
+    for node in graph_data.nodes(data=True):
+        if 'EK_PORT' in node[1]['type']:
+            node[1]['capacity_fraction'] = port_capacity[node[0]] / total_capacity
+            graph.add_node(node[0], **{**node[1], 'capacity_fraction': node[1]['capacity_fraction']})
+
+    for edge in graph_data.edges(data=True):
+        if edge[2]['type'] in ['RK_CONTAINS']:
+            graph.add_edge(edge[0], edge[1], **edge[2])
+
+    return {'type': 'graph', 'data': graph}
+Fail the test, and here is more info: 
+Two graph are not identical.
+=========Current query process is done!=========
+{'query': 'Attach an attribute called capacity fraction to each of the port type node in the graph whose value is the fraction of their capacity relative to the total capacity of all ports in that switch. Return the updated graph.'}
+Total test times:  1
+Testing accuracy:  0.0
+RESILIENT_PROMPT_END {"index": 8, "failures": 6, "completed": 2}
+RESILIENT_PROMPT_START {"index": 9, "total": 9, "query": "Divide the nodes into clusters using louvain communities algorithm. Add the cluster index as a node attrbute called 'Louvain Communities ClusterID'. Return the updated graph."}
+Query:  Divide the nodes into clusters using louvain communities algorithm. Add the cluster index as a node attrbute called 'Louvain Communities ClusterID'. Return the updated graph.
+Constraints:  When adding new nodes, you should also add edges based on their relationship with existing nodes. When creating a new graph, need to filter nodes and edges with attributes from the original graph. The graph is directed and each node has a 'name' attribute to represent itself. When update a graph, always create a graph copy, do not modify the input graph. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. Each node can have other attributes depending on its type. You should check relationship based on edge, check name based on node attribute. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. For example, a PORT node name is ju1.a1.m1.s2c1.p3
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Apply the Louvain communities algorithm to the given graph to identify communities or clusters within the network.
+
+Code generated:  def process_graph(graph_data):
+    G = graph_data.copy()
+    community_result = community.best_partition(G)
+    for node in G.nodes():
+        G.nodes[node]['Louvain Communities ClusterID'] = community_result[node]
+    return {'type': 'graph', 'data': G}
+Fail due to errors: NameError: Exception in line: 3. Message: name 'community' is not defined
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    G = graph_data.copy()
+    community_result = community.best_partition(Graph(G))
+
+    for node in G.nodes():
+        G.nodes[node]['Louvain Communities ClusterID'] = community_result[node]
+
+    return {'type': 'graph', 'data': G}
+Fail due to errors: NameError: Exception in line: 3. Message: name 'community' is not defined
+================= Error reduce: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    G = graph_data.copy()
+    community_result = community.best_partition(Graph(G))
+
+    for node in G.nodes():
+        G.nodes[node]['Louvain Communities ClusterID'] = community_result[node]
+
+    return {'type': 'graph', 'data': G}
+Fail due to errors: NameError: Exception in line: 3. Message: name 'community' is not defined
+================= Error reduce: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    G = graph_data.copy()
+    community_result = community.best_partition(Graph(G))
+
+    for node in G.nodes():
+        G.nodes[node]['Louvain Communities ClusterID'] = community_result[node]
+
+    return {'type': 'graph', 'data': G}
+Fail due to errors: NameError: Exception in line: 3. Message: name 'community' is not defined
+Fail the test, the code cannot run.
+Fail the test, prompt raised an exception.
+RESILIENT_PROMPT_EXCEPTION {"index": 9, "query": "Divide the nodes into clusters using louvain communities algorithm. Add the cluster index as a node attrbute called 'Louvain Communities ClusterID'. Return the updated graph.", "exception_type": "TypeError", "exception": "'NoneType' object is not subscriptable"}
+RESILIENT_PROMPT_END {"index": 9, "failures": 7, "completed": 2}
+RESILIENT_APP_SUMMARY {"app": "app-malt", "prompt_count": 9, "completed_without_exception": 2, "prompt_exceptions": 7}
