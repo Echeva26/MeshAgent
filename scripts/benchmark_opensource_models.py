@@ -301,23 +301,66 @@ def sequential_base_url(args: argparse.Namespace) -> str:
     return f"http://{args.serve_client_host}:{args.serve_port}/v1"
 
 
-def wait_for_server(base_url: str, process: subprocess.Popen, timeout_seconds: int) -> None:
-    deadline = time.monotonic() + timeout_seconds
+def fetch_served_model_ids(base_url: str) -> list[str]:
     models_url = f"{base_url.rstrip('/')}/models"
+    with urllib.request.urlopen(models_url, timeout=5) as response:
+        payload = json.loads(response.read().decode("utf-8"))
+    data = payload.get("data", [])
+    if not isinstance(data, list):
+        return []
+    return [str(item.get("id")) for item in data if isinstance(item, dict) and item.get("id")]
+
+
+def wait_for_server(
+    base_url: str,
+    process: subprocess.Popen,
+    timeout_seconds: int,
+    expected_model: str,
+) -> list[str]:
+    deadline = time.monotonic() + timeout_seconds
     last_error = None
 
     while time.monotonic() < deadline:
         if process.poll() is not None:
             raise RuntimeError(f"vLLM exited before becoming ready with code {process.returncode}.")
         try:
-            with urllib.request.urlopen(models_url, timeout=5) as response:
-                if 200 <= response.status < 500:
-                    return
-        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            served_model_ids = fetch_served_model_ids(base_url)
+            if expected_model in served_model_ids:
+                return served_model_ids
+            last_error = (
+                f"{base_url.rstrip('/')}/models responded, but served "
+                f"{served_model_ids}; waiting for {expected_model}."
+            )
+        except (json.JSONDecodeError, urllib.error.URLError, TimeoutError, OSError) as exc:
             last_error = exc
         time.sleep(5)
 
-    raise TimeoutError(f"Timed out waiting for {models_url}. Last error: {last_error}")
+    raise TimeoutError(
+        f"Timed out waiting for {base_url.rstrip('/')}/models to serve "
+        f"{expected_model}. Last error: {last_error}"
+    )
+
+
+def wait_for_server_shutdown(base_url: str, timeout_seconds: int = 120) -> None:
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline:
+        try:
+            fetch_served_model_ids(base_url)
+        except (json.JSONDecodeError, urllib.error.URLError, TimeoutError, OSError):
+            return
+        time.sleep(2)
+    raise TimeoutError(f"Timed out waiting for {base_url} to stop responding.")
+
+
+def ensure_server_not_running(base_url: str) -> None:
+    try:
+        served_model_ids = fetch_served_model_ids(base_url)
+    except (json.JSONDecodeError, urllib.error.URLError, TimeoutError, OSError):
+        return
+    raise RuntimeError(
+        f"{base_url} is already serving models {served_model_ids}. "
+        "Stop the existing server before using --serve-models-sequentially."
+    )
 
 
 def start_vllm_server(
@@ -342,6 +385,7 @@ def start_vllm_server(
         str(args.serve_port),
         *shlex.split(args.vllm_extra_args),
     ]
+    ensure_server_not_running(sequential_base_url(args))
     metadata = {
         "model_name": model["name"],
         "llm_model": model["llm_model"],
@@ -362,11 +406,24 @@ def start_vllm_server(
         text=True,
         start_new_session=True,
     )
-    wait_for_server(sequential_base_url(args), process, args.serve_start_timeout_seconds)
+    served_model_ids = wait_for_server(
+        sequential_base_url(args),
+        process,
+        args.serve_start_timeout_seconds,
+        model["llm_model"],
+    )
+    metadata["ready_at"] = datetime.now(timezone.utc).isoformat()
+    metadata["served_model_ids"] = served_model_ids
+    (server_dir / "server.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     return process, stdout_file, stderr_file
 
 
-def stop_vllm_server(process: subprocess.Popen, stdout_file: Any, stderr_file: Any) -> None:
+def stop_vllm_server(
+    process: subprocess.Popen,
+    stdout_file: Any,
+    stderr_file: Any,
+    base_url: str,
+) -> None:
     try:
         if process.poll() is None:
             try:
@@ -381,6 +438,7 @@ def stop_vllm_server(process: subprocess.Popen, stdout_file: Any, stderr_file: A
                 except ProcessLookupError:
                     pass
                 process.wait(timeout=30)
+        wait_for_server_shutdown(base_url)
     finally:
         stdout_file.close()
         stderr_file.close()
@@ -594,7 +652,12 @@ def main() -> int:
         finally:
             if server_process is not None and server_stdout is not None and server_stderr is not None:
                 print(f"Stopping vLLM for {model['name']}...")
-                stop_vllm_server(server_process, server_stdout, server_stderr)
+                stop_vllm_server(
+                    server_process,
+                    server_stdout,
+                    server_stderr,
+                    sequential_base_url(args),
+                )
 
     write_summary(run_dir, results)
     print(f"Benchmark results written to: {run_dir}")
