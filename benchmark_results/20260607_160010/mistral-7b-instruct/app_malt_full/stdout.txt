@@ -1,0 +1,70 @@
+Query:  What is the total capacity of all the ports of the packet switch ju1.a1.m1.s2c1? Return only the number
+Constraints:  Each PORT node has an attribute 'physical_capacity_bps' When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. Each node can have other attributes depending on its type. The graph is directed and each node has a 'name' attribute to represent itself. When adding new nodes, you should also add edges based on their relationship with existing nodes. When creating a new graph, need to filter nodes and edges with attributes from the original graph.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify the node 'ju1.a1.m1.s2c1' in the network topology.
+
+Code generated:  def process_graph(graph_data):
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            switch_loc = node[1]['packet_switch_attr']['switch_loc']
+            break
+
+    capacity = sum(edge[1]['physical_capacity_bps'] for edge in graph_data.edges(source=switch_loc, data=True) if edge[2]['type'] == 'RK_CONTAINS')
+
+    return_object = {'type': 'number', 'data': capacity}
+    return return_object
+Fail due to errors: KeyError: Exception in line: 4. Message: 'packet_switch_attr'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            if 'packet_switch_attr' in node[1]:
+                switch_loc = node[1]['packet_switch_attr']['switch_loc']
+                break
+
+    if switch_loc:
+        capacity = sum(edge[1]['physical_capacity_bps'] for edge in graph_data.edges(source=switch_loc, data=True) if edge[2]['type'] == 'RK_CONTAINS')
+        return_object = {'type': 'number', 'data': capacity}
+    else:
+        return_object = {'type': 'string', 'data': 'No switch location found for the given packet switch'}
+    return return_object
+Fail due to errors: UnboundLocalError: Exception in line: 8. Message: cannot access local variable 'switch_loc' where it is not associated with a value
+================= Error reduce: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    switch_loc = None
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            switch_loc = node[1]['packet_switch_attr']['switch_loc']
+            break
+
+    if switch_loc is None:
+        return_object = {'type': 'error', 'data': 'Packet switch not found'}
+        return return_object
+
+    capacity = sum(edge[1]['physical_capacity_bps'] for edge in graph_data.edges(source=switch_loc, data=True) if edge[2]['type'] == 'RK_CONTAINS')
+
+    return_object = {'type': 'number', 'data': capacity}
+    return return_object
+Fail due to errors: KeyError: Exception in line: 5. Message: 'packet_switch_attr'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            if 'packet_switch_attr' in node[1]:
+                switch_loc = node[1]['packet_switch_attr']['switch_loc']
+                break
+
+    if switch_loc:
+        capacity = sum(edge[1]['physical_capacity_bps'] for edge in graph_data.edges(source=switch_loc, data=True) if edge[2]['type'] == 'RK_CONTAINS')
+        return_object = {'type': 'number', 'data': capacity}
+    else:
+        return_object = {'type': 'string', 'data': 'No switch location found for the given packet switch'}
+    return return_object
+Fail due to errors: UnboundLocalError: Exception in line: 8. Message: cannot access local variable 'switch_loc' where it is not associated with a value
+Fail the test, the code cannot run.

@@ -1,0 +1,139 @@
+Query:  What is the total capacity of all the ports of the packet switch ju1.a1.m1.s2c1? Return only the number
+Constraints:  Each PORT node has an attribute 'physical_capacity_bps' When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. Each node can have other attributes depending on its type. The graph is directed and each node has a 'name' attribute to represent itself. When adding new nodes, you should also add edges based on their relationship with existing nodes. When creating a new graph, need to filter nodes and edges with attributes from the original graph.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify the packet switch node 'ju1.a1.m1.s2c1'.
+
+Code generated:  def process_graph(graph_data):
+    # Find the packet switch node 'ju1.a1.m1.s2c1'
+    packet_switch_node = next((node for node in graph_data.nodes(data=True) if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']), None)
+    
+    if packet_switch_node is None:
+        return {
+            "type": "text",
+            "data": "Packet switch 'ju1.a1.m1.s2c1' not found."
+        }
+    
+    # Initialize total capacity
+    total_capacity = 0
+    
+    # Traverse the hierarchy to find all PORT nodes and sum their capacities
+    def traverse(node_name):
+        nonlocal total_capacity
+        neighbors = list(graph_data.successors(node_name))
+        for neighbor in neighbors:
+            neighbor_node = graph_data.nodes(neighbor)
+            if 'EK_PORT' in neighbor_node['type']:
+                total_capacity += neighbor_node.get('physical_capacity_bps', 0)
+            elif 'RK_CONTAINS' in graph_data[node_name][neighbor]['type']:
+                traverse(neighbor)
+    
+    traverse(packet_switch_node[0])
+    
+    return {
+        "type": "text",
+        "data": str(total_capacity)
+    }
+Fail due to errors: KeyError: Exception in line: 364. Message: 'type'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    # Find the packet switch node 'ju1.a1.m1.s2c1'
+    packet_switch_node = next((node for node in graph_data.nodes(data=True) if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']), None)
+    
+    if packet_switch_node is None:
+        return {
+            "type": "text",
+            "data": "Packet switch 'ju1.a1.m1.s2c1' not found."
+        }
+    
+    # Initialize total capacity
+    total_capacity = 0
+    
+    # Traverse the hierarchy to find all PORT nodes and sum their capacities
+    def traverse(node_name):
+        nonlocal total_capacity
+        neighbors = list(graph_data.successors(node_name))
+        for neighbor in neighbors:
+            neighbor_node = graph_data.nodes(neighbor)
+            if 'EK_PORT' in neighbor_node['type']:
+                total_capacity += neighbor_node.get('physical_capacity_bps', 0)
+            elif 'RK_CONTAINS' in graph_data[node_name][neighbor]['type']:
+                traverse(neighbor)
+    
+    traverse(packet_switch_node[0])
+    
+    return {
+        "type": "text",
+        "data": str(total_capacity)
+    }
+Fail due to errors: KeyError: Exception in line: 364. Message: 'type'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    # Find the packet switch node 'ju1.a1.m1.s2c1'
+    packet_switch_node = next((node for node in graph_data.nodes(data=True) if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']), None)
+    
+    if packet_switch_node is None:
+        return {
+            "type": "text",
+            "data": "Packet switch 'ju1.a1.m1.s2c1' not found."
+        }
+    
+    # Initialize total capacity
+    total_capacity = 0
+    
+    # Traverse the hierarchy to find all PORT nodes and sum their capacities
+    def traverse(node_name):
+        nonlocal total_capacity
+        neighbors = list(graph_data.successors(node_name))
+        for neighbor in neighbors:
+            neighbor_node = graph_data.nodes(neighbor)
+            if 'EK_PORT' in neighbor_node.get('type', []):
+                total_capacity += neighbor_node.get('physical_capacity_bps', 0)
+            elif 'RK_CONTAINS' in graph_data[node_name][neighbor].get('type', []):
+                traverse(neighbor)
+    
+    traverse(packet_switch_node[0])
+    
+    return {
+        "type": "text",
+        "data": str(total_capacity)
+    }
+Fail due to errors: AttributeError: Exception in line: 20. Message: 'NodeDataView' object has no attribute 'get'
+================= Error reduce: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    # Find the packet switch node 'ju1.a1.m1.s2c1'
+    packet_switch_node = next((node for node in graph_data.nodes(data=True) if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']), None)
+    
+    if packet_switch_node is None:
+        return {
+            "type": "text",
+            "data": "Packet switch 'ju1.a1.m1.s2c1' not found."
+        }
+    
+    # Initialize total capacity
+    total_capacity = 0
+    
+    # Traverse the hierarchy to find all PORT nodes and sum their capacities
+    def traverse(node_name):
+        nonlocal total_capacity
+        neighbors = list(graph_data.successors(node_name))
+        for neighbor in neighbors:
+            neighbor_node = graph_data.nodes(neighbor)
+            if 'EK_PORT' in neighbor_node['type']:
+                total_capacity += neighbor_node.get('physical_capacity_bps', 0)
+            elif 'RK_CONTAINS' in graph_data[node_name][neighbor]['type']:
+                traverse(neighbor)
+    
+    traverse(packet_switch_node[0])
+    
+    return {
+        "type": "text",
+        "data": str(total_capacity)
+    }
+Fail due to errors: KeyError: Exception in line: 364. Message: 'type'
+Fail the test, the code cannot run.

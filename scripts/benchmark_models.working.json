@@ -1,0 +1,22 @@
+{
+  "models": [
+    {
+      "name": "qwen2.5-coder-14b",
+      "llm_model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "llm_base_url": "http://localhost:8000/v1",
+      "llm_api_key": "EMPTY"
+    },
+    {
+      "name": "qwen2.5-coder-7b",
+      "llm_model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "llm_base_url": "http://localhost:8000/v1",
+      "llm_api_key": "EMPTY"
+    },
+    {
+      "name": "mistral-7b-instruct",
+      "llm_model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "llm_base_url": "http://localhost:8000/v1",
+      "llm_api_key": "EMPTY"
+    }
+  ]
+}

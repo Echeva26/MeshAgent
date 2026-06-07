@@ -1,0 +1,514 @@
+[
+  {
+    "model_name": "qwen2.5-coder-14b",
+    "llm_model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "smoke_embeddings",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "/home/jovyan/MeshAgent/scripts/test_embeddings.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent",
+    "requires_llm": false,
+    "started_at": "2026-06-07T14:01:55.994784+00:00",
+    "ended_at": "2026-06-07T14:02:25.125130+00:00",
+    "duration_seconds": 29.13,
+    "returncode": 0,
+    "timed_out": false,
+    "success": true,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 0,
+      "unsupported_count": 0,
+      "query_count": 0
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/smoke_embeddings/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/smoke_embeddings/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-14b",
+    "llm_model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "smoke_vllm",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "/home/jovyan/MeshAgent/scripts/test_vllm.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:02:25.130246+00:00",
+    "ended_at": "2026-06-07T14:02:28.779854+00:00",
+    "duration_seconds": 3.65,
+    "returncode": 0,
+    "timed_out": false,
+    "success": true,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 0,
+      "unsupported_count": 0,
+      "query_count": 0
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/smoke_vllm/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/smoke_vllm/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-14b",
+    "llm_model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "retrieval_app_malt",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "/home/jovyan/MeshAgent/scripts/test_retrieval.py",
+      "--app",
+      "app-malt"
+    ],
+    "cwd": "/home/jovyan/MeshAgent",
+    "requires_llm": false,
+    "started_at": "2026-06-07T14:02:28.784147+00:00",
+    "ended_at": "2026-06-07T14:02:39.960389+00:00",
+    "duration_seconds": 11.176,
+    "returncode": 0,
+    "timed_out": false,
+    "success": true,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 0,
+      "unsupported_count": 0,
+      "query_count": 0
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/retrieval_app_malt/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/retrieval_app_malt/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-14b",
+    "llm_model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "retrieval_app_crg",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "/home/jovyan/MeshAgent/scripts/test_retrieval.py",
+      "--app",
+      "app-CRG"
+    ],
+    "cwd": "/home/jovyan/MeshAgent",
+    "requires_llm": false,
+    "started_at": "2026-06-07T14:02:39.965055+00:00",
+    "ended_at": "2026-06-07T14:02:50.377120+00:00",
+    "duration_seconds": 10.412,
+    "returncode": 0,
+    "timed_out": false,
+    "success": true,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 0,
+      "unsupported_count": 0,
+      "query_count": 0
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/retrieval_app_crg/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/retrieval_app_crg/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-14b",
+    "llm_model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "retrieval_app_traffic_analysis",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "/home/jovyan/MeshAgent/scripts/test_retrieval.py",
+      "--app",
+      "app-traffic-analysis"
+    ],
+    "cwd": "/home/jovyan/MeshAgent",
+    "requires_llm": false,
+    "started_at": "2026-06-07T14:02:50.381779+00:00",
+    "ended_at": "2026-06-07T14:03:00.770092+00:00",
+    "duration_seconds": 10.388,
+    "returncode": 0,
+    "timed_out": false,
+    "success": true,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 0,
+      "unsupported_count": 0,
+      "query_count": 0
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/retrieval_app_traffic_analysis/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/retrieval_app_traffic_analysis/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-14b",
+    "llm_model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "app_malt_full",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "full_cot_with_tools.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent/app-malt",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:03:00.774872+00:00",
+    "ended_at": "2026-06-07T14:06:40.288875+00:00",
+    "duration_seconds": 219.514,
+    "returncode": 1,
+    "timed_out": false,
+    "success": false,
+    "metrics": {
+      "accuracy_values": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "accuracy_mean": 0.25,
+      "accuracy_count": 4,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 3,
+      "unsupported_count": 1,
+      "query_count": 5
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/app_malt_full/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/app_malt_full/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-14b",
+    "llm_model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "app_crg_full",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "full_cot_with_tools.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent/app-CRG",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:06:40.295412+00:00",
+    "ended_at": "2026-06-07T14:08:55.046940+00:00",
+    "duration_seconds": 134.752,
+    "returncode": 0,
+    "timed_out": false,
+    "success": true,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 3,
+      "pass_count": 0,
+      "fail_count": 0,
+      "unsupported_count": 3,
+      "query_count": 3
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/app_crg_full/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/app_crg_full/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-14b",
+    "llm_model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "app_traffic_analysis_full",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "full_cot_with_tools.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent/app-traffic-analysis",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:08:55.052782+00:00",
+    "ended_at": "2026-06-07T14:11:39.751555+00:00",
+    "duration_seconds": 164.699,
+    "returncode": 1,
+    "timed_out": false,
+    "success": false,
+    "metrics": {
+      "accuracy_values": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "accuracy_mean": 0.3333333333333333,
+      "accuracy_count": 6,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 5,
+      "unsupported_count": 1,
+      "query_count": 7
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/app_traffic_analysis_full/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-14b/app_traffic_analysis_full/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-7b",
+    "llm_model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "smoke_vllm",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "/home/jovyan/MeshAgent/scripts/test_vllm.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:15:10.408647+00:00",
+    "ended_at": "2026-06-07T14:15:12.116379+00:00",
+    "duration_seconds": 1.708,
+    "returncode": 0,
+    "timed_out": false,
+    "success": true,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 0,
+      "unsupported_count": 0,
+      "query_count": 0
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-7b/smoke_vllm/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-7b/smoke_vllm/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-7b",
+    "llm_model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "app_malt_full",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "full_cot_with_tools.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent/app-malt",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:15:12.120602+00:00",
+    "ended_at": "2026-06-07T14:15:54.812706+00:00",
+    "duration_seconds": 42.692,
+    "returncode": 1,
+    "timed_out": false,
+    "success": false,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 1,
+      "unsupported_count": 0,
+      "query_count": 1
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-7b/app_malt_full/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-7b/app_malt_full/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-7b",
+    "llm_model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "app_crg_full",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "full_cot_with_tools.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent/app-CRG",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:15:54.818506+00:00",
+    "ended_at": "2026-06-07T14:17:31.444840+00:00",
+    "duration_seconds": 96.626,
+    "returncode": 0,
+    "timed_out": false,
+    "success": true,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 3,
+      "pass_count": 0,
+      "fail_count": 0,
+      "unsupported_count": 3,
+      "query_count": 3
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-7b/app_crg_full/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-7b/app_crg_full/stderr.txt"
+  },
+  {
+    "model_name": "qwen2.5-coder-7b",
+    "llm_model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "app_traffic_analysis_full",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "full_cot_with_tools.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent/app-traffic-analysis",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:17:31.450998+00:00",
+    "ended_at": "2026-06-07T14:18:38.700710+00:00",
+    "duration_seconds": 67.25,
+    "returncode": 1,
+    "timed_out": false,
+    "success": false,
+    "metrics": {
+      "accuracy_values": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "accuracy_mean": 0.6666666666666666,
+      "accuracy_count": 6,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 2,
+      "unsupported_count": 1,
+      "query_count": 7
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-7b/app_traffic_analysis_full/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-7b/app_traffic_analysis_full/stderr.txt"
+  },
+  {
+    "model_name": "mistral-7b-instruct",
+    "llm_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "smoke_vllm",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "/home/jovyan/MeshAgent/scripts/test_vllm.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:22:14.307767+00:00",
+    "ended_at": "2026-06-07T14:22:16.165149+00:00",
+    "duration_seconds": 1.857,
+    "returncode": 0,
+    "timed_out": false,
+    "success": true,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 0,
+      "unsupported_count": 0,
+      "query_count": 0
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/mistral-7b-instruct/smoke_vllm/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/mistral-7b-instruct/smoke_vllm/stderr.txt"
+  },
+  {
+    "model_name": "mistral-7b-instruct",
+    "llm_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "app_malt_full",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "full_cot_with_tools.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent/app-malt",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:22:16.169942+00:00",
+    "ended_at": "2026-06-07T14:22:57.363964+00:00",
+    "duration_seconds": 41.194,
+    "returncode": 1,
+    "timed_out": false,
+    "success": false,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 1,
+      "unsupported_count": 0,
+      "query_count": 1
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/mistral-7b-instruct/app_malt_full/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/mistral-7b-instruct/app_malt_full/stderr.txt"
+  },
+  {
+    "model_name": "mistral-7b-instruct",
+    "llm_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "app_crg_full",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "full_cot_with_tools.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent/app-CRG",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:22:57.369018+00:00",
+    "ended_at": "2026-06-07T14:23:37.676647+00:00",
+    "duration_seconds": 40.308,
+    "returncode": 1,
+    "timed_out": false,
+    "success": false,
+    "metrics": {
+      "accuracy_values": [],
+      "accuracy_mean": null,
+      "accuracy_count": 0,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 1,
+      "unsupported_count": 1,
+      "query_count": 1
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/mistral-7b-instruct/app_crg_full/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/mistral-7b-instruct/app_crg_full/stderr.txt"
+  },
+  {
+    "model_name": "mistral-7b-instruct",
+    "llm_model": "mistralai/Mistral-7B-Instruct-v0.3",
+    "llm_base_url": "http://localhost:8000/v1",
+    "test": "app_traffic_analysis_full",
+    "command": [
+      "/home/jovyan/MeshAgent/.venv/bin/python",
+      "full_cot_with_tools.py"
+    ],
+    "cwd": "/home/jovyan/MeshAgent/app-traffic-analysis",
+    "requires_llm": true,
+    "started_at": "2026-06-07T14:23:37.682024+00:00",
+    "ended_at": "2026-06-07T14:26:09.144018+00:00",
+    "duration_seconds": 151.462,
+    "returncode": 1,
+    "timed_out": false,
+    "success": false,
+    "metrics": {
+      "accuracy_values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "accuracy_mean": 0.16666666666666666,
+      "accuracy_count": 6,
+      "accuracy_skipped_count": 0,
+      "pass_count": 0,
+      "fail_count": 9,
+      "unsupported_count": 1,
+      "query_count": 7
+    },
+    "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/mistral-7b-instruct/app_traffic_analysis_full/stdout.txt",
+    "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/mistral-7b-instruct/app_traffic_analysis_full/stderr.txt"
+  }
+]

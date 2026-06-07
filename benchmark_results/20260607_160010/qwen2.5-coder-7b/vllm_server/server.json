@@ -1,0 +1,29 @@
+{
+  "model_name": "qwen2.5-coder-7b",
+  "llm_model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+  "command": [
+    "/home/jovyan/MeshAgent/.venv/bin/python",
+    "-m",
+    "vllm.entrypoints.openai.api_server",
+    "--model",
+    "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "--host",
+    "0.0.0.0",
+    "--port",
+    "8000",
+    "--max-model-len",
+    "8192",
+    "--gpu-memory-utilization",
+    "0.90",
+    "--max-num-seqs",
+    "1"
+  ],
+  "base_url": "http://localhost:8000/v1",
+  "started_at": "2026-06-07T14:11:40.377278+00:00",
+  "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-7b/vllm_server/stdout.txt",
+  "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/qwen2.5-coder-7b/vllm_server/stderr.txt",
+  "ready_at": "2026-06-07T14:15:10.406915+00:00",
+  "served_model_ids": [
+    "Qwen/Qwen2.5-Coder-7B-Instruct"
+  ]
+}

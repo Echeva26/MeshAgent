@@ -1,0 +1,8 @@
+constraints:
+- score=0.5234 To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']].
+- score=0.5172 packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'.
+- score=0.4666 Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT
+tools:
+- score=0.5004 capacity on a packet switch example
+- score=0.3550 graph that contains all AGG_BLOCK
+- score=0.2048 bandwidth on each SUPERBLOCK

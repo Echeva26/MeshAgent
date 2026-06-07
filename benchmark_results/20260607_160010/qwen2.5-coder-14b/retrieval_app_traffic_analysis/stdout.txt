@@ -1,0 +1,8 @@
+constraints:
+- score=0.5303 Each edge has attributes 'byte_weight', 'connection_weight' and 'packet_weight' which are represented as ratios of the total number of bytes, connections and packets of the entire 
+- score=0.4591 The data is represented as a networkx graph made up of nodes representing virtual machines in a network.
+- score=0.3673 There should not be any nodes in the graph that are not connected to any other nodes.
+tools:
+- score=0.3940 Cut the graph into two parts such that the number of edges between the cuts is same.
+- score=0.3867 Bisect the network such that the number of nodes on either side of the cut is equal
+- score=0.3092 calculate maximal cliques.

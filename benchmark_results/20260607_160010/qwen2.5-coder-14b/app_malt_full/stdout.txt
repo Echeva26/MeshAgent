@@ -1,0 +1,729 @@
+Query:  What is the total capacity of all the ports of the packet switch ju1.a1.m1.s2c1? Return only the number
+Constraints:  Each PORT node has an attribute 'physical_capacity_bps' When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. Each node can have other attributes depending on its type. The graph is directed and each node has a 'name' attribute to represent itself. When adding new nodes, you should also add edges based on their relationship with existing nodes. When creating a new graph, need to filter nodes and edges with attributes from the original graph.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify the packet switch node "ju1.a1.m1.s2c1" in the network topology.
+
+Code generated:  def process_graph(graph_data):
+    # Find the packet switch node "ju1.a1.m1.s2c1"
+    packet_switch_node = None
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            packet_switch_node = node
+            break
+    
+    if packet_switch_node is None:
+        return {
+            'type': 'text',
+            'data': 'Packet switch node "ju1.a1.m1.s2c1" not found.'
+        }
+    
+    # Calculate the total capacity of all the ports of the packet switch
+    total_capacity = 0
+    for neighbor, attrs in graph_data[packet_switch_node[0]].items():
+        if 'EK_PORT' in graph_data.nodes[neighbor]['type']:
+            total_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+    
+    return {
+        'type': 'text',
+        'data': str(total_capacity)
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Traverse the network graph to find all port nodes that are directly connected to the packet switch node "ju1.a1.m1.s2c1".
+
+Code generated:  def process_graph(graph_data):
+    # Find the packet switch node "ju1.a1.m1.s2c1"
+    packet_switch_node = None
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            packet_switch_node = node
+            break
+    
+    if packet_switch_node is None:
+        return {
+            'type': 'text',
+            'data': 'Packet switch node "ju1.a1.m1.s2c1" not found.'
+        }
+    
+    # Calculate the total capacity of all the ports of the packet switch
+    total_capacity = 0
+    for neighbor, attrs in graph_data[packet_switch_node[0]].items():
+        if 'EK_PORT' in graph_data.nodes[neighbor]['type']:
+            total_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+    
+    return {
+        'type': 'text',
+        'data': str(total_capacity)
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  Sum up the capacity attributes of all identified port nodes to get the total capacity of the ports of the packet switch "ju1.a1.m1.s2c1".
+'
+Code generated:  def process_graph(graph_data):
+    # Find the packet switch node "ju1.a1.m1.s2c1"
+    packet_switch_node = None
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            packet_switch_node = node
+            break
+    
+    if packet_switch_node is None:
+        return {
+            'type': 'text',
+            'data': 'Packet switch node "ju1.a1.m1.s2c1" not found.'
+        }
+    
+    # Calculate the total capacity of all the ports of the packet switch
+    total_capacity = 0
+    for neighbor, attrs in graph_data[packet_switch_node[0]].items():
+        if 'EK_PORT' in graph_data.nodes[neighbor]['type']:
+            total_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+    
+    return {
+        'type': 'text',
+        'data': str(total_capacity)
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+third_step_verify_result:  True
+def process_graph(graph_data):
+    # Find the packet switch node "ju1.a1.m1.s2c1"
+    packet_switch_node = None
+    for node in graph_data.nodes(data=True):
+        if node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']:
+            packet_switch_node = node
+            break
+    
+    if packet_switch_node is None:
+        return {
+            'type': 'text',
+            'data': 'Packet switch node "ju1.a1.m1.s2c1" not found.'
+        }
+    
+    # Calculate the total capacity of all the ports of the packet switch
+    total_capacity = 0
+    for neighbor, attrs in graph_data[packet_switch_node[0]].items():
+        if 'EK_PORT' in graph_data.nodes[neighbor]['type']:
+            total_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+    
+    return {
+        'type': 'text',
+        'data': str(total_capacity)
+    }
+Pass the test!
+=========Current query process is done!=========
+{'query': 'What is the total capacity of all the ports of the packet switch ju1.a1.m1.s2c1? Return only the number'}
+Total test times:  1
+Testing accuracy:  1.0
+Query:  How many packet switches have more capacity than ju1.a2.m3.s2c3? Can you give me an example of such a switch? Return the text
+Constraints:  packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Each PORT node has an attribute 'physical_capacity_bps' 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. Each node can have other attributes depending on its type. The graph is directed and each node has a 'name' attribute to represent itself. When update a graph, always create a graph copy, do not modify the input graph. When adding new nodes, you should also add edges based on their relationship with existing nodes.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify the node representing "ju1.a2.m3.s2c3" in the network topology.
+
+Code generated:  def process_graph(graph_data):
+    # Find the node representing "ju1.a2.m3.s2c3"
+    target_node_name = "ju1.a2.m3.s2c3"
+    target_node = None
+    
+    for node in graph_data.nodes(data=True):
+        if node[0] == target_node_name and 'EK_PACKET_SWITCH' in node[1].get('type', []):
+            target_node = node
+            break
+    
+    if target_node is None:
+        return {
+            'type': 'text',
+            'data': f"No packet switch found with the name {target_node_name}."
+        }
+    
+    # Calculate the capacity of the target node
+    target_capacity = 0
+    for neighbor in graph_data.neighbors(target_node_name):
+        if graph_data[target_node_name][neighbor].get('type') == 'RK_CONTAINS':
+            if graph_data.nodes[neighbor].get('type') == ['EK_PORT']:
+                target_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+    
+    # Find packet switches with more capacity than the target node
+    more_capacity_switches = []
+    for node in graph_data.nodes(data=True):
+        if 'EK_PACKET_SWITCH' in node[1].get('type', []):
+            node_capacity = 0
+            for neighbor in graph_data.neighbors(node[0]):
+                if graph_data[node[0]][neighbor].get('type') == 'RK_CONTAINS':
+                    if graph_data.nodes[neighbor].get('type') == ['EK_PORT']:
+                        node_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+            
+            if node_capacity > target_capacity:
+                more_capacity_switches.append(node[0])
+    
+    # Get an example of a switch with more capacity
+    example_switch = more_capacity_switches[0] if more_capacity_switches else None
+    
+    # Prepare the response
+    response_text = (
+        f"There are {len(more_capacity_switches)} packet switches with more capacity than {target_node_name}. "
+        f"An example of such a switch is {example_switch}." if example_switch else
+        f"There are no packet switches with more capacity than {target_node_name}."
+    )
+    
+    return {
+        'type': 'text',
+        'data': response_text
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Compare the capacity of the identified node with all other nodes that have the type EK_PACKET_SWITCH.
+
+Code generated:  def process_graph(graph_data):
+    # Find the node representing "ju1.a2.m3.s2c3"
+    target_node_name = "ju1.a2.m3.s2c3"
+    target_node = None
+    
+    for node in graph_data.nodes(data=True):
+        if node[0] == target_node_name and 'EK_PACKET_SWITCH' in node[1].get('type', []):
+            target_node = node
+            break
+    
+    if target_node is None:
+        return {
+            'type': 'text',
+            'data': f"No packet switch found with the name {target_node_name}."
+        }
+    
+    # Calculate the capacity of the target node
+    target_capacity = 0
+    for neighbor in graph_data.neighbors(target_node_name):
+        if graph_data[target_node_name][neighbor].get('type') == 'RK_CONTAINS':
+            if graph_data.nodes[neighbor].get('type') == ['EK_PORT']:
+                target_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+    
+    # Find packet switches with more capacity than the target node
+    more_capacity_switches = []
+    for node in graph_data.nodes(data=True):
+        if 'EK_PACKET_SWITCH' in node[1].get('type', []):
+            node_capacity = 0
+            for neighbor in graph_data.neighbors(node[0]):
+                if graph_data[node[0]][neighbor].get('type') == 'RK_CONTAINS':
+                    if graph_data.nodes[neighbor].get('type') == ['EK_PORT']:
+                        node_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+            
+            if node_capacity > target_capacity:
+                more_capacity_switches.append(node[0])
+    
+    # Get an example of a switch with more capacity
+    example_switch = more_capacity_switches[0] if more_capacity_switches else None
+    
+    # Prepare the response
+    response_text = (
+        f"There are {len(more_capacity_switches)} packet switches with more capacity than {target_node_name}. "
+        f"An example of such a switch is {example_switch}." if example_switch else
+        f"There are no packet switches with more capacity than {target_node_name}."
+    )
+    
+    return {
+        'type': 'text',
+        'data': response_text
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  Count the number of packet switches that have a higher capacity than "ju1.a2.m3.s2c3" and provide an example of one such switch.
+'
+Code generated:  def process_graph(graph_data):
+    # Find the node representing "ju1.a2.m3.s2c3"
+    target_node_name = "ju1.a2.m3.s2c3"
+    target_node = None
+    
+    for node in graph_data.nodes(data=True):
+        if node[0] == target_node_name and 'EK_PACKET_SWITCH' in node[1].get('type', []):
+            target_node = node
+            break
+    
+    if target_node is None:
+        return {
+            'type': 'text',
+            'data': f"No packet switch found with the name {target_node_name}."
+        }
+    
+    # Calculate the capacity of the target node
+    target_capacity = 0
+    for neighbor in graph_data.neighbors(target_node_name):
+        if graph_data[target_node_name][neighbor].get('type') == 'RK_CONTAINS':
+            if graph_data.nodes[neighbor].get('type') == ['EK_PORT']:
+                target_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+    
+    # Find packet switches with more capacity than the target node
+    more_capacity_switches = []
+    for node in graph_data.nodes(data=True):
+        if 'EK_PACKET_SWITCH' in node[1].get('type', []):
+            node_capacity = 0
+            for neighbor in graph_data.neighbors(node[0]):
+                if graph_data[node[0]][neighbor].get('type') == 'RK_CONTAINS':
+                    if graph_data.nodes[neighbor].get('type') == ['EK_PORT']:
+                        node_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+            
+            if node_capacity > target_capacity:
+                more_capacity_switches.append(node[0])
+    
+    # Get an example of a switch with more capacity
+    example_switch = more_capacity_switches[0] if more_capacity_switches else None
+    
+    # Prepare the response
+    response_text = (
+        f"There are {len(more_capacity_switches)} packet switches with more capacity than {target_node_name}. "
+        f"An example of such a switch is {example_switch}." if example_switch else
+        f"There are no packet switches with more capacity than {target_node_name}."
+    )
+    
+    return {
+        'type': 'text',
+        'data': response_text
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+third_step_verify_result:  True
+def process_graph(graph_data):
+    # Find the node representing "ju1.a2.m3.s2c3"
+    target_node_name = "ju1.a2.m3.s2c3"
+    target_node = None
+    
+    for node in graph_data.nodes(data=True):
+        if node[0] == target_node_name and 'EK_PACKET_SWITCH' in node[1].get('type', []):
+            target_node = node
+            break
+    
+    if target_node is None:
+        return {
+            'type': 'text',
+            'data': f"No packet switch found with the name {target_node_name}."
+        }
+    
+    # Calculate the capacity of the target node
+    target_capacity = 0
+    for neighbor in graph_data.neighbors(target_node_name):
+        if graph_data[target_node_name][neighbor].get('type') == 'RK_CONTAINS':
+            if graph_data.nodes[neighbor].get('type') == ['EK_PORT']:
+                target_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+    
+    # Find packet switches with more capacity than the target node
+    more_capacity_switches = []
+    for node in graph_data.nodes(data=True):
+        if 'EK_PACKET_SWITCH' in node[1].get('type', []):
+            node_capacity = 0
+            for neighbor in graph_data.neighbors(node[0]):
+                if graph_data[node[0]][neighbor].get('type') == 'RK_CONTAINS':
+                    if graph_data.nodes[neighbor].get('type') == ['EK_PORT']:
+                        node_capacity += graph_data.nodes[neighbor].get('physical_capacity_bps', 0)
+            
+            if node_capacity > target_capacity:
+                more_capacity_switches.append(node[0])
+    
+    # Get an example of a switch with more capacity
+    example_switch = more_capacity_switches[0] if more_capacity_switches else None
+    
+    # Prepare the response
+    response_text = (
+        f"There are {len(more_capacity_switches)} packet switches with more capacity than {target_node_name}. "
+        f"An example of such a switch is {example_switch}." if example_switch else
+        f"There are no packet switches with more capacity than {target_node_name}."
+    )
+    
+    return {
+        'type': 'text',
+        'data': response_text
+    }
+Fail the test, and here is more info: 
+ground truth:  {'number of such switches': 3, 'example such switch': 'ju1.a1.m1.s2c4'}
+model output:  There are 3 packet switches with more capacity than ju1.a2.m3.s2c3. An example of such a switch is ju1.a1.m1.s2c1.
+=========Current query process is done!=========
+{'query': 'How many packet switches have more capacity than ju1.a2.m3.s2c3? Can you give me an example of such a switch? Return the text'}
+Total test times:  1
+Testing accuracy:  0.0
+Query:  How many packet switches are there in a typical chassis? Can you find me an example of a chassis with more or fewer switches than normal?
+Constraints:  Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. Each PORT node has an attribute 'physical_capacity_bps' Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Each node can have other attributes depending on its type. When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. The graph is directed and each node has a 'name' attribute to represent itself. When adding new nodes, you should also add edges based on their relationship with existing nodes. When creating a new graph, need to filter nodes and edges with attributes from the original graph.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify the structure of a typical chassis and understand how packet switches are contained within it.
+
+Code generated:  def process_graph(graph_data):
+    # Find all packet switches in the graph
+    packet_switches = [node for node in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in node[1].get('type', [])]
+    
+    # Count the number of packet switches
+    num_packet_switches = len(packet_switches)
+    
+    # Find a chassis with more switches than normal
+    chassis_with_more_switches = None
+    max_switches_in_chassis = 0
+    
+    for node in graph_data.nodes(data=True):
+        if 'EK_CHASSIS' in node[1].get('type', []):
+            chassis_name = node[0]
+            switches_in_chassis = [n for n in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in n[1].get('type', []) and chassis_name in n[0]]
+            if len(switches_in_chassis) > max_switches_in_chassis:
+                max_switches_in_chassis = len(switches_in_chassis)
+                chassis_with_more_switches = chassis_name
+    
+    # Find a chassis with fewer switches than normal
+    chassis_with_fewer_switches = None
+    min_switches_in_chassis = float('inf')
+    
+    for node in graph_data.nodes(data=True):
+        if 'EK_CHASSIS' in node[1].get('type', []):
+            chassis_name = node[0]
+            switches_in_chassis = [n for n in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in n[1].get('type', []) and chassis_name in n[0]]
+            if len(switches_in_chassis) < min_switches_in_chassis:
+                min_switches_in_chassis = len(switches_in_chassis)
+                chassis_with_fewer_switches = chassis_name
+    
+    return_object = {
+        'type': 'text',
+        'data': f"Typical chassis contains {num_packet_switches} packet switches. "
+                f"Chassis with more switches than normal: {chassis_with_more_switches}, "
+                f"Chassis with fewer switches than normal: {chassis_with_fewer_switches}"
+    }
+    
+    return return_object
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Research the standard configuration of a chassis to determine the average number of packet switches it houses.
+
+Code generated:  def process_graph(graph_data):
+    # Find all packet switches in the graph
+    packet_switches = [node for node in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in node[1].get('type', [])]
+    
+    # Count the number of packet switches
+    num_packet_switches = len(packet_switches)
+    
+    # Find a chassis with more switches than normal
+    chassis_with_more_switches = None
+    max_switches_in_chassis = 0
+    
+    for node in graph_data.nodes(data=True):
+        if 'EK_CHASSIS' in node[1].get('type', []):
+            chassis_name = node[0]
+            switches_in_chassis = [n for n in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in n[1].get('type', []) and chassis_name in n[0]]
+            if len(switches_in_chassis) > max_switches_in_chassis:
+                max_switches_in_chassis = len(switches_in_chassis)
+                chassis_with_more_switches = chassis_name
+    
+    # Find a chassis with fewer switches than normal
+    chassis_with_fewer_switches = None
+    min_switches_in_chassis = float('inf')
+    
+    for node in graph_data.nodes(data=True):
+        if 'EK_CHASSIS' in node[1].get('type', []):
+            chassis_name = node[0]
+            switches_in_chassis = [n for n in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in n[1].get('type', []) and chassis_name in n[0]]
+            if len(switches_in_chassis) < min_switches_in_chassis:
+                min_switches_in_chassis = len(switches_in_chassis)
+                chassis_with_fewer_switches = chassis_name
+    
+    return_object = {
+        'type': 'text',
+        'data': f"Typical chassis contains {num_packet_switches} packet switches. "
+                f"Chassis with more switches than normal: {chassis_with_more_switches}, "
+                f"Chassis with fewer switches than normal: {chassis_with_fewer_switches}"
+    }
+    
+    return return_object
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  Look for examples of chassis configurations that deviate from the norm, either having more or fewer packet switches than usual.
+'
+Code generated:  def process_graph(graph_data):
+    # Find all packet switches in the graph
+    packet_switches = [node for node in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in node[1].get('type', [])]
+    
+    # Count the number of packet switches
+    num_packet_switches = len(packet_switches)
+    
+    # Find a chassis with more switches than normal
+    chassis_with_more_switches = None
+    max_switches_in_chassis = 0
+    
+    for node in graph_data.nodes(data=True):
+        if 'EK_CHASSIS' in node[1].get('type', []):
+            chassis_name = node[0]
+            switches_in_chassis = [n for n in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in n[1].get('type', []) and chassis_name in n[0]]
+            if len(switches_in_chassis) > max_switches_in_chassis:
+                max_switches_in_chassis = len(switches_in_chassis)
+                chassis_with_more_switches = chassis_name
+    
+    # Find a chassis with fewer switches than normal
+    chassis_with_fewer_switches = None
+    min_switches_in_chassis = float('inf')
+    
+    for node in graph_data.nodes(data=True):
+        if 'EK_CHASSIS' in node[1].get('type', []):
+            chassis_name = node[0]
+            switches_in_chassis = [n for n in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in n[1].get('type', []) and chassis_name in n[0]]
+            if len(switches_in_chassis) < min_switches_in_chassis:
+                min_switches_in_chassis = len(switches_in_chassis)
+                chassis_with_fewer_switches = chassis_name
+    
+    return_object = {
+        'type': 'text',
+        'data': f"Typical chassis contains {num_packet_switches} packet switches. "
+                f"Chassis with more switches than normal: {chassis_with_more_switches}, "
+                f"Chassis with fewer switches than normal: {chassis_with_fewer_switches}"
+    }
+    
+    return return_object
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+third_step_verify_result:  True
+def process_graph(graph_data):
+    # Find all packet switches in the graph
+    packet_switches = [node for node in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in node[1].get('type', [])]
+    
+    # Count the number of packet switches
+    num_packet_switches = len(packet_switches)
+    
+    # Find a chassis with more switches than normal
+    chassis_with_more_switches = None
+    max_switches_in_chassis = 0
+    
+    for node in graph_data.nodes(data=True):
+        if 'EK_CHASSIS' in node[1].get('type', []):
+            chassis_name = node[0]
+            switches_in_chassis = [n for n in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in n[1].get('type', []) and chassis_name in n[0]]
+            if len(switches_in_chassis) > max_switches_in_chassis:
+                max_switches_in_chassis = len(switches_in_chassis)
+                chassis_with_more_switches = chassis_name
+    
+    # Find a chassis with fewer switches than normal
+    chassis_with_fewer_switches = None
+    min_switches_in_chassis = float('inf')
+    
+    for node in graph_data.nodes(data=True):
+        if 'EK_CHASSIS' in node[1].get('type', []):
+            chassis_name = node[0]
+            switches_in_chassis = [n for n in graph_data.nodes(data=True) if 'EK_PACKET_SWITCH' in n[1].get('type', []) and chassis_name in n[0]]
+            if len(switches_in_chassis) < min_switches_in_chassis:
+                min_switches_in_chassis = len(switches_in_chassis)
+                chassis_with_fewer_switches = chassis_name
+    
+    return_object = {
+        'type': 'text',
+        'data': f"Typical chassis contains {num_packet_switches} packet switches. "
+                f"Chassis with more switches than normal: {chassis_with_more_switches}, "
+                f"Chassis with fewer switches than normal: {chassis_with_fewer_switches}"
+    }
+    
+    return return_object
+
+
+Fail the test, and here is more info: 
+ground truth:  {'Typical chassis, Packet switch count:': np.float64(1.0), 'Example chassis with fewer switches:': None, 'Example chassis with more switches:': None}
+model output:  Typical chassis contains 320 packet switches. Chassis with more switches than normal: ju1.a1.m1.s2c1, Chassis with fewer switches than normal: ju1.a1.m1.s2c1
+=========Current query process is done!=========
+{'query': 'How many packet switches are there in a typical chassis? Can you find me an example of a chassis with more or fewer switches than normal?'}
+Total test times:  1
+Testing accuracy:  0.0
+Query:  How many ports in the graph? What type of children nodes does it have (count the average number)? What type of parent nodes does it have (count the average number)?How many agg blocks are there in a common superblock? Also find the min number and max number of agg blocks.
+Constraints:  The graph is directed and each node has a 'name' attribute to represent itself. When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT 
+Each node has a 'type' attribute, in the format of EK_{TYPE}. This is important: 'type' must be a list, can include ['EK_SUPERBLOCK', 'EK_CHASSIS', 'EK_RACK', 'EK_AGG_BLOCK', 'EK_JUPITER', 'EK_PORT', 'EK_SPINEBLOCK', 'EK_PACKET_SWITCH', 'EK_CONTROL_POINT', 'EK_CONTROL_DOMAIN']. For example, a PORT node name is ju1.a1.m1.s2c1.p3 Each PORT node has an attribute 'physical_capacity_bps' Each node can have other attributes depending on its type. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. When creating a new graph, need to filter nodes and edges with attributes from the original graph. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. When adding new nodes, you should also add edges based on their relationship with existing nodes. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'.
+Tools:  no tools available
+Skip: no golden answer for this prompt (exact string key mismatch).
+=========Current query process is done!=========
+{'query': 'How many ports in the graph? What type of children nodes does it have (count the average number)? What type of parent nodes does it have (count the average number)?How many agg blocks are there in a common superblock? Also find the min number and max number of agg blocks.'}
+Total test times:  1
+Testing accuracy:  0.0
+Query:  Does the graph have any information about power usage or physical location of the switches? Return 'Yes' or 'No'.
+Constraints:  The graph is directed and each node has a 'name' attribute to represent itself. packet switch nodes also have switch location attribute 'switch_loc' in node attribute 'packet_switch_attr'. When update a graph, always create a graph copy, do not modify the input graph. When creating a new graph, need to filter nodes and edges with attributes from the original graph. To find node based on type, check the name and type list. For example, [node[0] == 'ju1.a1.m1.s2c1' and 'EK_PACKET_SWITCH' in node[1]['type']]. Adding new nodes need to consider all hierarchy. For example, adding a new switch requires adding it to the corresponding jupiter, aggregation block, and domain. The name to add on each layer can be inferred from new node name string. You should check relationship based on edge, check name based on node attribute. When calculating capacity of a node, you need to sum the physical_capacity_bps on the PORT of each hierarchy contains in this node. Each directed edge also has a 'type' attribute, include RK_CONTAINS, RK_CONTROL. Hierarchy: CHASSIS contains PACKET_SWITCH, JUPITER contains SUPERBLOCK, SUPERBLOCK contains AGG_BLOCK, AGG_BLOCK contains PACKET_SWITCH, PACKET_SWITCH contains PORT Each node can have other attributes depending on its type. Each PORT node has an attribute 'physical_capacity_bps' When adding new nodes, you should also add edges based on their relationship with existing nodes.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Analyze the attributes of nodes and edges in the graph to determine if they contain any information related to power usage or physical location.
+
+Code generated:  def process_graph(graph_data):
+    has_power_usage = False
+    has_physical_location = False
+    
+    for node in graph_data.nodes(data=True):
+        if 'power_usage' in node[1]:
+            has_power_usage = True
+        if 'switch_loc' in node[1]['packet_switch_attr'] if 'packet_switch_attr' in node[1] else False:
+            has_physical_location = True
+    
+    if has_power_usage or has_physical_location:
+        return {'type': 'text', 'data': 'Yes'}
+    else:
+        return {'type': 'text', 'data': 'No'}
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Check if any node has attributes that specifically mention power usage or physical location details such as rack, chassis, or port.
+
+Code generated:  def process_graph(graph_data):
+    has_power_usage = False
+    has_physical_location = False
+    
+    for node in graph_data.nodes(data=True):
+        if 'power_usage' in node[1]:
+            has_power_usage = True
+        if 'switch_loc' in node[1].get('packet_switch_attr', {}):
+            has_physical_location = True
+        if 'rack' in node[1] or 'chassis' in node[1] or 'port' in node[1]:
+            has_physical_location = True
+    
+    if has_power_usage or has_physical_location:
+        return {'type': 'text', 'data': 'Yes'}
+    else:
+        return {'type': 'text', 'data': 'No'}
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  Evaluate if any edge type, such as RK_CONTAINS or RK_CONTROLS, links nodes in a way that implies power usage or physical location relationships.
+'
+Code generated:  def process_graph(graph_data):
+    has_power_usage = False
+    has_physical_location = False
+    
+    # Check for power usage in node attributes
+    for node in graph_data.nodes(data=True):
+        if 'power_usage' in node[1]:
+            has_power_usage = True
+        
+        # Check for physical location in node attributes
+        if 'switch_loc' in node[1].get('packet_switch_attr', {}):
+            has_physical_location = True
+        if 'rack' in node[1] or 'chassis' in node[1] or 'port' in node[1]:
+            has_physical_location = True
+    
+    # Check for power usage or physical location relationships via edge types
+    for edge in graph_data.edges(data=True):
+        if edge[2].get('type') == 'RK_CONTAINS' or edge[2].get('type') == 'RK_CONTROLS':
+            if 'power_usage' in graph_data.nodes[edge[0]][1] or 'power_usage' in graph_data.nodes[edge[1]][1]:
+                has_power_usage = True
+            if 'switch_loc' in graph_data.nodes[edge[0]][1].get('packet_switch_attr', {}) or 'switch_loc' in graph_data.nodes[edge[1]][1].get('packet_switch_attr', {}):
+                has_physical_location = True
+    
+    if has_power_usage or has_physical_location:
+        return {'type': 'text', 'data': 'Yes'}
+    else:
+        return {'type': 'text', 'data': 'No'}
+Fail due to errors: KeyError: Exception in line: 19. Message: 1
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    has_power_usage = False
+    has_physical_location = False
+    
+    # Check for power usage in node attributes
+    for node in graph_data.nodes(data=True):
+        if 'power_usage' in node[1]:
+            has_power_usage = True
+        
+        # Check for physical location in node attributes
+        if 'switch_loc' in node[1].get('packet_switch_attr', {}):
+            has_physical_location = True
+        if 'rack' in node[1] or 'chassis' in node[1] or 'port' in node[1]:
+            has_physical_location = True
+    
+    # Check for power usage or physical location relationships via edge types
+    for edge in graph_data.edges(data=True):
+        source_node = graph_data.nodes.get(edge[0])
+        target_node = graph_data.nodes.get(edge[1])
+        
+        if edge[2].get('type') == 'RK_CONTAINS' or edge[2].get('type') == 'RK_CONTROLS':
+            if source_node and 'power_usage' in source_node[1]:
+                has_power_usage = True
+            if target_node and 'power_usage' in target_node[1]:
+                has_power_usage = True
+            
+            if source_node and 'switch_loc' in source_node[1].get('packet_switch_attr', {}):
+                has_physical_location = True
+            if target_node and 'switch_loc' in target_node[1].get('packet_switch_attr', {}):
+                has_physical_location = True
+    
+    if has_power_usage or has_physical_location:
+        return {'type': 'text', 'data': 'Yes'}
+    else:
+        return {'type': 'text', 'data': 'No'}
+Fail due to errors: KeyError: Exception in line: 22. Message: 1
+================= Error reduce: start self-debugging =================
+Debugged code for time:  1
+def process_graph(graph_data):
+    has_power_usage = False
+    has_physical_location = False
+    
+    # Check for power usage in node attributes
+    for node in graph_data.nodes(data=True):
+        if 'power_usage' in node[1]:
+            has_power_usage = True
+        
+        # Check for physical location in node attributes
+        if 'packet_switch_attr' in node[1] and 'switch_loc' in node[1]['packet_switch_attr']:
+            has_physical_location = True
+        if 'rack' in node[1] or 'chassis' in node[1] or 'port' in node[1]:
+            has_physical_location = True
+    
+    # Check for power usage or physical location relationships via edge types
+    for edge in graph_data.edges(data=True):
+        if edge[2].get('type') == 'RK_CONTAINS' or edge[2].get('type') == 'RK_CONTROLS':
+            if 'power_usage' in graph_data.nodes[edge[0]][1] or 'power_usage' in graph_data.nodes[edge[1]][1]:
+                has_power_usage = True
+            if 'packet_switch_attr' in graph_data.nodes[edge[0]][1] and 'switch_loc' in graph_data.nodes[edge[0]][1]['packet_switch_attr']:
+                has_physical_location = True
+            if 'packet_switch_attr' in graph_data.nodes[edge[1]][1] and 'switch_loc' in graph_data.nodes[edge[1]][1]['packet_switch_attr']:
+                has_physical_location = True
+    
+    if has_power_usage or has_physical_location:
+        return {'type': 'text', 'data': 'Yes'}
+    else:
+        return {'type': 'text', 'data': 'No'}
+Fail due to errors: KeyError: Exception in line: 19. Message: 1
+================= Error reduce: start self-debugging =================
+Debugged code for time:  2
+def process_graph(graph_data):
+    has_power_usage = False
+    has_physical_location = False
+    
+    # Check for power usage in node attributes
+    for node in graph_data.nodes(data=True):
+        if 'power_usage' in node[1]:
+            has_power_usage = True
+        
+        # Check for physical location in node attributes
+        if 'switch_loc' in node[1].get('packet_switch_attr', {}):
+            has_physical_location = True
+        if 'rack' in node[1] or 'chassis' in node[1] or 'port' in node[1]:
+            has_physical_location = True
+    
+    # Check for power usage or physical location relationships via edge types
+    for edge in graph_data.edges(data=True):
+        source_node = graph_data.nodes.get(edge[0])
+        target_node = graph_data.nodes.get(edge[1])
+        
+        if edge[2].get('type') == 'RK_CONTAINS' or edge[2].get('type') == 'RK_CONTROLS':
+            if source_node and 'power_usage' in source_node[1]:
+                has_power_usage = True
+            if target_node and 'power_usage' in target_node[1]:
+                has_power_usage = True
+            
+            if source_node and 'switch_loc' in source_node[1].get('packet_switch_attr', {}):
+                has_physical_location = True
+            if target_node and 'switch_loc' in target_node[1].get('packet_switch_attr', {}):
+                has_physical_location = True
+    
+    if has_power_usage or has_physical_location:
+        return {'type': 'text', 'data': 'Yes'}
+    else:
+        return {'type': 'text', 'data': 'No'}
+Fail due to errors: KeyError: Exception in line: 22. Message: 1
+Fail the test, the code cannot run.

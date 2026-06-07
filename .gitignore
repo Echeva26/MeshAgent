@@ -65,4 +65,3 @@ logs/*
 app-malt/logs/*
 app-traffic-analysis/logs/*
 app-CRG/logs/*
-benchmark_results/*

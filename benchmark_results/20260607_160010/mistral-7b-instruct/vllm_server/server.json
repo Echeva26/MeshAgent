@@ -1,0 +1,29 @@
+{
+  "model_name": "mistral-7b-instruct",
+  "llm_model": "mistralai/Mistral-7B-Instruct-v0.3",
+  "command": [
+    "/home/jovyan/MeshAgent/.venv/bin/python",
+    "-m",
+    "vllm.entrypoints.openai.api_server",
+    "--model",
+    "mistralai/Mistral-7B-Instruct-v0.3",
+    "--host",
+    "0.0.0.0",
+    "--port",
+    "8000",
+    "--max-model-len",
+    "8192",
+    "--gpu-memory-utilization",
+    "0.90",
+    "--max-num-seqs",
+    "1"
+  ],
+  "base_url": "http://localhost:8000/v1",
+  "started_at": "2026-06-07T14:18:39.276234+00:00",
+  "stdout_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/mistral-7b-instruct/vllm_server/stdout.txt",
+  "stderr_path": "/home/jovyan/MeshAgent/benchmark_results/20260607_160010/mistral-7b-instruct/vllm_server/stderr.txt",
+  "ready_at": "2026-06-07T14:22:14.306085+00:00",
+  "served_model_ids": [
+    "mistralai/Mistral-7B-Instruct-v0.3"
+  ]
+}

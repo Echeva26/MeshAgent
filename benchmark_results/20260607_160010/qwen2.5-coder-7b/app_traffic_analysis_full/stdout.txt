@@ -1,0 +1,653 @@
+Query:  How many nodes are in the graph? Return only the number.
+Constraints:  There should not be any nodes in the graph that are not connected to any other nodes. There should not be any edges in the graph that are not connected to any other nodes. The data is represented as a networkx graph made up of nodes representing virtual machines in a network. Each node has an attribute 'labels'.  Adding new nodes need to consider edges. Each node has an attribute 'ip_address', you should use this when checking by IP address.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Understand that the question asks for the total number of nodes in the given networkx graph.
+
+Code generated:  def process_graph(graph_data):
+    return_object = {
+        'type': 'text',
+        'data': str(len(graph_data.nodes()))
+    }
+    return return_object
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Use the `number_of_nodes()` method from the networkx library to count the nodes in the graph.
+
+Code generated:  def process_graph(graph_data):
+    return_object = {
+        'type': 'text',
+        'data': str(len(graph_data.nodes()))
+    }
+    return return_object
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  Return the result of the `number_of_nodes()` method as the final answer.
+'
+Code generated:  def process_graph(graph_data):
+    return_object = {
+        'type': 'text',
+        'data': str(len(graph_data.nodes()))
+    }
+    return return_object
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+third_step_verify_result:  True
+def process_graph(graph_data):
+    return_object = {
+        'type': 'text',
+        'data': str(len(graph_data.nodes()))
+    }
+    return return_object
+Pass the test!
+=========Current query process is done!=========
+{'query': 'How many nodes are in the graph? Return only the number.'}
+Total test times:  1
+Testing accuracy:  1.0
+Query:  How many nodes and edges are in the graph? Return a list.
+Constraints:  There should not be any edges in the graph that are not connected to any other nodes. There should not be any nodes in the graph that are not connected to any other nodes. Each edge has attributes 'byte_weight', 'connection_weight' and 'packet_weight' which are represented as ratios of the total number of bytes, connections and packets of the entire network. The data is represented as a networkx graph made up of nodes representing virtual machines in a network. Each node has an attribute 'labels', it is a list. for example: ['app:test', 'app:prod'].  Adding new nodes need to consider edges.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Import the necessary library to work with the networkx graph.
+
+Code generated:  def process_graph(graph_data):
+    # Get the number of nodes and edges in the graph
+    num_nodes = graph_data.number_of_nodes()
+    num_edges = graph_data.number_of_edges()
+    
+    # Create a list containing the number of nodes and edges
+    result = [num_nodes, num_edges]
+    
+    # Return the result as a JSON object with type 'list'
+    return {
+        'type': 'list',
+        'data': result
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Use the `number_of_nodes()` method from networkx to get the count of nodes in the graph.
+
+Code generated:  def process_graph(graph_data):
+    # Get the number of nodes and edges in the graph
+    num_nodes = graph_data.number_of_nodes()
+    num_edges = graph_data.number_of_edges()
+    
+    # Create a list containing the number of nodes and edges
+    result = [num_nodes, num_edges]
+    
+    # Return the result as a JSON object with type 'list'
+    return {
+        'type': 'list',
+        'data': result
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  Use the `number_of_edges()` method from networkx to get the count of edges in the graph. Then, return a list containing the node count and edge count.
+'
+Code generated:  def process_graph(graph_data):
+    # Get the number of nodes and edges in the graph
+    num_nodes = graph_data.number_of_nodes()
+    num_edges = graph_data.number_of_edges()
+    
+    # Create a list containing the number of nodes and edges
+    result = [num_nodes, num_edges]
+    
+    # Return the result as a JSON object with type 'list'
+    return {
+        'type': 'list',
+        'data': result
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+third_step_verify_result:  True
+def process_graph(graph_data):
+    # Get the number of nodes and edges in the graph
+    num_nodes = graph_data.number_of_nodes()
+    num_edges = graph_data.number_of_edges()
+    
+    # Create a list containing the number of nodes and edges
+    result = [num_nodes, num_edges]
+    
+    # Return the result as a JSON object with type 'list'
+    return {
+        'type': 'list',
+        'data': result
+    }
+Pass the test!
+=========Current query process is done!=========
+{'query': 'How many nodes and edges are in the graph? Return a list.'}
+Total test times:  1
+Testing accuracy:  1.0
+Query:  How many unique nodes have edges to nodes with label app:prod and doesn't contain the label app:prod? Return only the number.
+Constraints:  Each node has an attribute 'labels', it is a list. for example: ['app:test', 'app:prod'].  Each node has an attribute 'labels'.  There should not be any edges in the graph that are not connected to any other nodes. There should not be any nodes in the graph that are not connected to any other nodes. Adding new nodes need to consider edges. Each node has attributes such as unique ip_address and one or more labels of the form key=value.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify all nodes that have edges connected to nodes labeled 'app:prod'.
+
+Code generated:  def process_graph(graph_data):
+    prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' in attrs.get('labels', [])]
+    connected_nodes = set()
+    
+    for node in prod_nodes:
+        connected_nodes.update(graph_data.neighbors(node))
+    
+    non_prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' not in attrs.get('labels', []) and node in connected_nodes]
+    
+    return {
+        'type': 'number',
+        'data': len(non_prod_nodes)
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Filter out any nodes from the result that themselves carry the label 'app:prod'.
+
+Code generated:  def process_graph(graph_data):
+    prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' in attrs.get('labels', [])]
+    connected_nodes = set()
+    
+    for node in prod_nodes:
+        connected_nodes.update(graph_data.neighbors(node))
+    
+    non_prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' not in attrs.get('labels', []) and node in connected_nodes]
+    
+    # Filter out nodes that themselves carry the label 'app:prod'
+    non_prod_nodes = [node for node in non_prod_nodes if 'app:prod' not in graph_data.nodes[node]['labels']]
+    
+    return {
+        'type': 'number',
+        'data': len(non_prod_nodes)
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  Count the remaining unique nodes after applying the filter.
+'
+Code generated:  def process_graph(graph_data):
+    prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' in attrs.get('labels', [])]
+    connected_nodes = set()
+    
+    for node in prod_nodes:
+        connected_nodes.update(graph_data.neighbors(node))
+    
+    non_prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' not in attrs.get('labels', []) and node in connected_nodes]
+    
+    # Filter out nodes that themselves carry the label 'app:prod'
+    non_prod_nodes = [node for node in non_prod_nodes if 'app:prod' not in graph_data.nodes[node]['labels']]
+    
+    return {
+        'type': 'number',
+        'data': len(non_prod_nodes)
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+third_step_verify_result:  True
+def process_graph(graph_data):
+    prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' in attrs.get('labels', [])]
+    connected_nodes = set()
+    
+    for node in prod_nodes:
+        connected_nodes.update(graph_data.neighbors(node))
+    
+    non_prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' not in attrs.get('labels', []) and node in connected_nodes]
+    
+    # Filter out nodes that themselves carry the label 'app:prod'
+    non_prod_nodes = [node for node in non_prod_nodes if 'app:prod' not in graph_data.nodes[node]['labels']]
+    
+    return {
+        'type': 'number',
+        'data': len(non_prod_nodes)
+    }
+Pass the test!
+=========Current query process is done!=========
+{'query': "How many unique nodes have edges to nodes with label app:prod and doesn't contain the label app:prod? Return only the number."}
+Total test times:  1
+Testing accuracy:  1.0
+Query:  Show me the unique IP address prefix and the number of nodes per prefix. Return a table without headers.
+Constraints:  Each node has attributes such as unique ip_address and one or more labels of the form key=value. Each node has an attribute 'ip_address', you should use this when checking by IP address. Each edge has attributes 'byte_weight', 'connection_weight' and 'packet_weight' which are represented as ratios of the total number of bytes, connections and packets of the entire network. Each node has an attribute 'labels'.  The data is represented as a networkx graph made up of nodes representing virtual machines in a network. Each node has an attribute 'labels', it is a list. for example: ['app:test', 'app:prod']. 
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Extract the IP addresses from all nodes in the graph using the attribute 'unique IP address'.
+
+Code generated:  def process_graph(graph_data):
+    # Extract unique IP addresses from all nodes
+    ip_addresses = {node['ip_address'] for node in graph_data.nodes(data=True)}
+    
+    # Create a dictionary to count nodes per prefix
+    ip_prefix_count = {}
+    for ip in ip_addresses:
+        prefix = '.'.join(ip.split('.')[:3])  # Get the first three octets as the prefix
+        if prefix in ip_prefix_count:
+            ip_prefix_count[prefix] += 1
+        else:
+            ip_prefix_count[prefix] = 1
+    
+    # Prepare the data for the table
+    table_data = [[prefix, count] for prefix, count in ip_prefix_count.items()]
+    
+    return {
+        'type': 'table',
+        'data': table_data
+    }
+Fail due to errors: TypeError: Exception in line: 3. Message: tuple indices must be integers or slices, not str
+================= Error reduce: start self-debugging =================
+Debugged code for time:  0
+def process_graph(graph_data):
+    # Extract unique IP addresses from all nodes
+    ip_addresses = {data['ip_address'] for _, data in graph_data.nodes(data=True)}
+    
+    # Create a dictionary to count nodes per prefix
+    ip_prefix_count = {}
+    for ip in ip_addresses:
+        prefix = '.'.join(ip.split('.')[:3])  # Get the first three octets as the prefix
+        if prefix in ip_prefix_count:
+            ip_prefix_count[prefix] += 1
+        else:
+            ip_prefix_count[prefix] = 1
+    
+    # Prepare the data for the table
+    table_data = [[prefix, count] for prefix, count in ip_prefix_count.items()]
+    
+    return {
+        'type': 'table',
+        'data': table_data
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Use Python's built-in string manipulation functions to extract the prefix from each IP address. This can be done by splitting the IP address at the '.' character and taking the first three parts.
+
+Code generated:  def process_graph(graph_data):
+    # Extract unique IP addresses from all nodes
+    ip_addresses = {data['ip_address'] for _, data in graph_data.nodes(data=True)}
+    
+    # Create a dictionary to count nodes per prefix
+    ip_prefix_count = {}
+    for ip in ip_addresses:
+        prefix = '.'.join(ip.split('.')[:3])  # Get the first three octets as the prefix
+        if prefix in ip_prefix_count:
+            ip_prefix_count[prefix] += 1
+        else:
+            ip_prefix_count[prefix] = 1
+    
+    # Prepare the data for the table
+    table_data = [[prefix, count] for prefix, count in ip_prefix_count.items()]
+    
+    return {
+        'type': 'table',
+        'data': table_data
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  Count the number of nodes for each unique prefix using a dictionary where the keys are the prefixes and the values are the counts. Finally, print the results in a table format without headers.
+'
+Code generated:  def process_graph(graph_data):
+    # Extract unique IP addresses from all nodes
+    ip_addresses = {data['ip_address'] for _, data in graph_data.nodes(data=True)}
+    
+    # Create a dictionary to count nodes per prefix
+    ip_prefix_count = {}
+    for ip in ip_addresses:
+        prefix = '.'.join(ip.split('.')[:3])  # Get the first three octets as the prefix
+        if prefix in ip_prefix_count:
+            ip_prefix_count[prefix] += 1
+        else:
+            ip_prefix_count[prefix] = 1
+    
+    # Prepare the data for the table
+    table_data = [[prefix, count] for prefix, count in ip_prefix_count.items()]
+    
+    return {
+        'type': 'table',
+        'data': table_data
+    }
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+third_step_verify_result:  True
+def process_graph(graph_data):
+    # Extract unique IP addresses from all nodes
+    ip_addresses = {data['ip_address'] for _, data in graph_data.nodes(data=True)}
+    
+    # Create a dictionary to count nodes per prefix
+    ip_prefix_count = {}
+    for ip in ip_addresses:
+        prefix = '.'.join(ip.split('.')[:3])  # Get the first three octets as the prefix
+        if prefix in ip_prefix_count:
+            ip_prefix_count[prefix] += 1
+        else:
+            ip_prefix_count[prefix] = 1
+    
+    # Prepare the data for the table
+    table_data = [[prefix, count] for prefix, count in ip_prefix_count.items()]
+    
+    return {
+        'type': 'table',
+        'data': table_data
+    }
+Fail the test, and here is more info: 
+ground truth:  [['149', 52], ['15', 48]]
+model output:  [['15.76.178', 1], ['149.196.150', 1], ['149.196.80', 1], ['15.76.228', 1], ['149.196.249', 1], ['15.76.139', 1], ['149.196.238', 1], ['15.76.180', 1], ['149.196.22', 1], ['149.196.237', 1], ['149.196.40', 1], ['149.196.248', 2], ['15.76.107', 1], ['15.76.73', 1], ['149.196.59', 1], ['15.76.88', 1], ['15.76.164', 1], ['15.76.79', 1], ['15.76.231', 1], ['15.76.162', 1], ['149.196.6', 1], ['15.76.69', 1], ['149.196.183', 1], ['149.196.73', 1], ['15.76.24', 1], ['149.196.130', 2], ['15.76.202', 1], ['15.76.29', 1], ['149.196.198', 1], ['15.76.128', 1], ['149.196.137', 1], ['149.196.116', 1], ['15.76.26', 1], ['15.76.196', 1], ['15.76.206', 1], ['149.196.94', 1], ['15.76.185', 1], ['15.76.216', 2], ['149.196.127', 1], ['15.76.78', 2], ['149.196.47', 1], ['15.76.8', 2], ['15.76.218', 2], ['15.76.248', 1], ['15.76.100', 1], ['149.196.149', 1], ['149.196.252', 1], ['149.196.83', 1], ['149.196.33', 1], ['15.76.67', 1], ['15.76.149', 1], ['15.76.34', 1], ['149.196.38', 1], ['149.196.133', 1], ['15.76.170', 1], ['149.196.52', 1], ['15.76.6', 1], ['149.196.185', 1], ['149.196.177', 1], ['149.196.161', 1], ['149.196.168', 1], ['15.76.28', 1], ['149.196.106', 1], ['149.196.186', 1], ['15.76.85', 1], ['149.196.217', 2], ['15.76.43', 1], ['15.76.122', 1], ['15.76.158', 1], ['149.196.120', 1], ['149.196.174', 1], ['15.76.209', 1], ['149.196.221', 1], ['149.196.155', 1], ['149.196.191', 1], ['149.196.178', 1], ['149.196.72', 1], ['15.76.19', 1], ['15.76.56', 1], ['149.196.100', 2], ['15.76.150', 1], ['149.196.234', 1], ['15.76.64', 1], ['149.196.243', 1], ['149.196.14', 1], ['15.76.114', 1], ['149.196.214', 1], ['149.196.57', 1], ['149.196.139', 1], ['15.76.184', 1], ['15.76.210', 1], ['149.196.46', 1]]
+=========Current query process is done!=========
+{'query': 'Show me the unique IP address prefix and the number of nodes per prefix. Return a table without headers.'}
+Total test times:  1
+Testing accuracy:  0.0
+Query:  Delete all edges whose byte weight is less than the median byte weight in the whole graph without using the statistics library. Make sure to compute the median and not the mean. Return the networkx graph object.
+Constraints:  Each edge has attributes 'byte_weight', 'connection_weight' and 'packet_weight' which are represented as ratios of the total number of bytes, connections and packets of the entire network. There should not be any edges in the graph that are not connected to any other nodes. The data is represented as a networkx graph made up of nodes representing virtual machines in a network. There should not be any nodes in the graph that are not connected to any other nodes. Adding new nodes need to consider edges. Each edge connects two nodes if there is a data connection between the virtual machines represented by the nodes.
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Calculate the median byte weight of all edges in the graph. To do this, collect all byte weights into a list, sort the list, and find the middle value. If the list has an odd number of elements, the median is the middle element. If it has an even number of elements, the median is the average of the two middle elements.
+
+Code generated:  def process_graph(graph_data):
+    # Collect all byte weights into a list
+    byte_weights = [edge[2]['byte_weight'] for edge in graph_data.edges(data=True)]
+    
+    # Sort the list of byte weights
+    sorted_byte_weights = sorted(byte_weights)
+    
+    # Find the median byte weight
+    n = len(sorted_byte_weights)
+    if n % 2 == 1:
+        median = sorted_byte_weights[n // 2]
+    else:
+        median = (sorted_byte_weights[n // 2 - 1] + sorted_byte_weights[n // 2]) / 2
+    
+    # Delete all edges whose byte weight is less than the median byte weight
+    edges_to_remove = [(u, v) for u, v, data in graph_data.edges(data=True) if data['byte_weight'] < median]
+    graph_data.remove_edges_from(edges_to_remove)
+    
+    # Ensure no isolated nodes remain
+    graph_data.remove_nodes_from(list(nx.isolates(graph_data)))
+    
+    return_object = {
+        'type': 'graph',
+        'data': graph_data
+    }
+    
+    return return_object
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  Iterate through all edges in the graph and check if their byte weight is less than the calculated median byte weight. If it is, remove that edge from the graph.
+
+Code generated:  def process_graph(graph_data):
+    # Collect all byte weights into a list
+    byte_weights = [edge[2]['byte_weight'] for edge in graph_data.edges(data=True)]
+    
+    # Sort the list of byte weights
+    sorted_byte_weights = sorted(byte_weights)
+    
+    # Find the median byte weight
+    n = len(sorted_byte_weights)
+    if n % 2 == 1:
+        median = sorted_byte_weights[n // 2]
+    else:
+        median = (sorted_byte_weights[n // 2 - 1] + sorted_byte_weights[n // 2]) / 2
+    
+    # Delete all edges whose byte weight is less than the median byte weight
+    edges_to_remove = [(u, v) for u, v, data in graph_data.edges(data=True) if data['byte_weight'] < median]
+    graph_data.remove_edges_from(edges_to_remove)
+    
+    # Ensure no isolated nodes remain
+    graph_data.remove_nodes_from(list(nx.isolates(graph_data)))
+    
+    return_object = {
+        'type': 'graph',
+        'data': graph_data
+    }
+    
+    return return_object
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  Return the modified graph object after removing the edges with byte weights less than the median.
+'
+Code generated:  def process_graph(graph_data):
+    # Collect all byte weights into a list
+    byte_weights = [edge[2]['byte_weight'] for edge in graph_data.edges(data=True)]
+    
+    # Sort the list of byte weights
+    sorted_byte_weights = sorted(byte_weights)
+    
+    # Find the median byte weight
+    n = len(sorted_byte_weights)
+    if n % 2 == 1:
+        median = sorted_byte_weights[n // 2]
+    else:
+        median = (sorted_byte_weights[n // 2 - 1] + sorted_byte_weights[n // 2]) / 2
+    
+    # Delete all edges whose byte weight is less than the median byte weight
+    edges_to_remove = [(u, v) for u, v, data in graph_data.edges(data=True) if data['byte_weight'] < median]
+    graph_data.remove_edges_from(edges_to_remove)
+    
+    # Ensure no isolated nodes remain
+    graph_data.remove_nodes_from(list(nx.isolates(graph_data)))
+    
+    return_object = {
+        'type': 'graph',
+        'data': graph_data
+    }
+    
+    return return_object
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+third_step_verify_result:  True
+def process_graph(graph_data):
+    # Collect all byte weights into a list
+    byte_weights = [edge[2]['byte_weight'] for edge in graph_data.edges(data=True)]
+    
+    # Sort the list of byte weights
+    sorted_byte_weights = sorted(byte_weights)
+    
+    # Find the median byte weight
+    n = len(sorted_byte_weights)
+    if n % 2 == 1:
+        median = sorted_byte_weights[n // 2]
+    else:
+        median = (sorted_byte_weights[n // 2 - 1] + sorted_byte_weights[n // 2]) / 2
+    
+    # Delete all edges whose byte weight is less than the median byte weight
+    edges_to_remove = [(u, v) for u, v, data in graph_data.edges(data=True) if data['byte_weight'] < median]
+    graph_data.remove_edges_from(edges_to_remove)
+    
+    # Ensure no isolated nodes remain
+    graph_data.remove_nodes_from(list(nx.isolates(graph_data)))
+    
+    return_object = {
+        'type': 'graph',
+        'data': graph_data
+    }
+    
+    return return_object
+Pass the test!
+=========Current query process is done!=========
+{'query': 'Delete all edges whose byte weight is less than the median byte weight in the whole graph without using the statistics library. Make sure to compute the median and not the mean. Return the networkx graph object.'}
+Total test times:  1
+Testing accuracy:  1.0
+Query:  What is the average byte weight and connection weight of edges incident on nodes with labels app:prod? Return a table with header 'Average byte weight', 'Average connection weight' on the first row.
+Constraints:  Each edge has attributes 'byte_weight', 'connection_weight' and 'packet_weight' which are represented as ratios of the total number of bytes, connections and packets of the entire network. Each edge connects two nodes if there is a data connection between the virtual machines represented by the nodes. The data is represented as a networkx graph made up of nodes representing virtual machines in a network. Each node has an attribute 'labels'.  Adding new nodes need to consider edges. Each node has an attribute 'labels', it is a list. for example: ['app:test', 'app:prod']. 
+Tools:  no tools available
+Find the prompt in the list.
+Calling model
+Step 1:  Identify all nodes in the graph that have the label 'app=prod'.
+
+Code generated:  def process_graph(graph_data):
+    # Step: Identify all nodes in the graph that have the label 'app:prod'
+    prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' in attrs.get('labels', [])]
+    
+    # Initialize variables to calculate the sum of byte weights and connection weights
+    total_byte_weight = 0
+    total_connection_weight = 0
+    num_edges = 0
+    
+    # Iterate over all edges connected to nodes with the label 'app:prod'
+    for node in prod_nodes:
+        for neighbor, edge_attrs in graph_data[node].items():
+            total_byte_weight += edge_attrs['byte_weight']
+            total_connection_weight += edge_attrs['connection_weight']
+            num_edges += 1
+    
+    # Calculate the average byte weight and connection weight
+    if num_edges > 0:
+        avg_byte_weight = total_byte_weight / num_edges
+        avg_connection_weight = total_connection_weight / num_edges
+    else:
+        avg_byte_weight = 0
+        avg_connection_weight = 0
+    
+    # Prepare the result as a table
+    result_table = [
+        ["Average byte weight", "Average connection weight"],
+        [avg_byte_weight, avg_connection_weight]
+    ]
+    
+    # Create the return object
+    return_object = {
+        "type": "table",
+        "data": result_table
+    }
+    
+    return json.dumps(return_object)
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+first_step_verify_result:  True
+Step 2:  For each node identified in Step 1, find all edges connected to it.
+
+Code generated:  def process_graph(graph_data):
+    # Step: Identify all nodes in the graph that have the label 'app:prod'
+    prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' in attrs.get('labels', [])]
+    
+    # Initialize variables to calculate the sum of byte weights and connection weights
+    total_byte_weight = 0
+    total_connection_weight = 0
+    num_edges = 0
+    
+    # Iterate over all edges connected to nodes with the label 'app:prod'
+    for node in prod_nodes:
+        for neighbor, edge_attrs in graph_data[node].items():
+            total_byte_weight += edge_attrs['byte_weight']
+            total_connection_weight += edge_attrs['connection_weight']
+            num_edges += 1
+    
+    # Calculate the average byte weight and connection weight
+    if num_edges > 0:
+        avg_byte_weight = total_byte_weight / num_edges
+        avg_connection_weight = total_connection_weight / num_edges
+    else:
+        avg_byte_weight = 0
+        avg_connection_weight = 0
+    
+    # Prepare the result as a table
+    result_table = [
+        ["Average byte weight", "Average connection weight"],
+        [avg_byte_weight, avg_connection_weight]
+    ]
+    
+    # Create the return object
+    return_object = {
+        "type": "table",
+        "data": result_table
+    }
+    
+    return json.dumps(return_object)
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+second_step_verify_result:  True
+Step 3:  Calculate the average byte weight and connection weight of these edges and present them in a table format with the specified headers.
+'
+Code generated:  def process_graph(graph_data):
+    # Step: Identify all nodes in the graph that have the label 'app:prod'
+    prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' in attrs.get('labels', [])]
+    
+    # Initialize variables to calculate the sum of byte weights and connection weights
+    total_byte_weight = 0
+    total_connection_weight = 0
+    num_edges = 0
+    
+    # Iterate over all edges connected to nodes with the label 'app:prod'
+    for node in prod_nodes:
+        for neighbor, edge_attrs in graph_data[node].items():
+            total_byte_weight += edge_attrs['byte_weight']
+            total_connection_weight += edge_attrs['connection_weight']
+            num_edges += 1
+    
+    # Calculate the average byte weight and connection weight
+    if num_edges > 0:
+        avg_byte_weight = total_byte_weight / num_edges
+        avg_connection_weight = total_connection_weight / num_edges
+    else:
+        avg_byte_weight = 0
+        avg_connection_weight = 0
+    
+    # Prepare the result as a table
+    result_table = [
+        ["Average byte weight", "Average connection weight"],
+        [avg_byte_weight, avg_connection_weight]
+    ]
+    
+    # Create the return object
+    return_object = {
+        "type": "table",
+        "data": result_table
+    }
+    
+    return json.dumps(return_object)
+================= Start verifying invariant constraints =================
+================= Congrats, verifiers all passed! =================
+third_step_verify_result:  True
+def process_graph(graph_data):
+    # Step: Identify all nodes in the graph that have the label 'app:prod'
+    prod_nodes = [node for node, attrs in graph_data.nodes(data=True) if 'app:prod' in attrs.get('labels', [])]
+    
+    # Initialize variables to calculate the sum of byte weights and connection weights
+    total_byte_weight = 0
+    total_connection_weight = 0
+    num_edges = 0
+    
+    # Iterate over all edges connected to nodes with the label 'app:prod'
+    for node in prod_nodes:
+        for neighbor, edge_attrs in graph_data[node].items():
+            total_byte_weight += edge_attrs['byte_weight']
+            total_connection_weight += edge_attrs['connection_weight']
+            num_edges += 1
+    
+    # Calculate the average byte weight and connection weight
+    if num_edges > 0:
+        avg_byte_weight = total_byte_weight / num_edges
+        avg_connection_weight = total_connection_weight / num_edges
+    else:
+        avg_byte_weight = 0
+        avg_connection_weight = 0
+    
+    # Prepare the result as a table
+    result_table = [
+        ["Average byte weight", "Average connection weight"],
+        [avg_byte_weight, avg_connection_weight]
+    ]
+    
+    # Create the return object
+    return_object = {
+        "type": "table",
+        "data": result_table
+    }
+    
+    return json.dumps(return_object)
+Fail the test, and here is more info: 
+ground truth:  [['Average byte weight', 'Average connection weight'], [1.9952871291099366, 1.0091584945245213]]
+model output:  [['Average byte weight', 'Average connection weight'], [1.9414106592297793, 0.9677155874080114]]
+=========Current query process is done!=========
+{'query': "What is the average byte weight and connection weight of edges incident on nodes with labels app:prod? Return a table with header 'Average byte weight', 'Average connection weight' on the first row."}
+Total test times:  1
+Testing accuracy:  0.0
+Query:  How many nodes with labels 'app:prod' are in the graph? Return only the number.
+Constraints:  Each node has an attribute 'labels', it is a list. for example: ['app:test', 'app:prod'].  Each node has an attribute 'labels'.  There should not be any nodes in the graph that are not connected to any other nodes. Each node has attributes such as unique ip_address and one or more labels of the form key=value. The data is represented as a networkx graph made up of nodes representing virtual machines in a network. Each edge has attributes 'byte_weight', 'connection_weight' and 'packet_weight' which are represented as ratios of the total number of bytes, connections and packets of the entire network.
+Tools:  no tools available

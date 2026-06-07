@@ -1,0 +1,7 @@
+constraints:
+- score=0.4275 network interfaces node refers to 'Networkinterfaces' type node in the graph.
+- score=0.3537 network security groups node refers to 'networksecuritygroups' type node in the graph.
+- score=0.3439 virtual networks node refers to 'virtualnetworks' type node in the graph.
+tools:
+- score=0.3092 calculate maximal cliques.
+- score=0.2692 when you check node degrees (include max degree and min degree).
