@@ -3,9 +3,13 @@ import csv
 import json
 import os
 import re
+import shlex
+import signal
 import subprocess
 import sys
 import time
+import urllib.error
+import urllib.request
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -166,6 +170,49 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Print the model/test matrix without executing any subprocesses.",
     )
+    parser.add_argument(
+        "--serve-models-sequentially",
+        action="store_true",
+        help=(
+            "Start one vLLM server per model, run that model's tests, stop it, "
+            "then continue with the next model. Useful for one-GPU benchmarks."
+        ),
+    )
+    parser.add_argument(
+        "--serve-host",
+        default="0.0.0.0",
+        help="Host passed to vLLM when --serve-models-sequentially is used.",
+    )
+    parser.add_argument(
+        "--serve-client-host",
+        default="localhost",
+        help="Host used by tests to call the sequential vLLM server.",
+    )
+    parser.add_argument(
+        "--serve-port",
+        type=int,
+        default=8000,
+        help="Port used for each sequential vLLM server.",
+    )
+    parser.add_argument(
+        "--serve-start-timeout-seconds",
+        type=int,
+        default=1200,
+        help="Maximum time to wait for each vLLM server to become ready.",
+    )
+    parser.add_argument(
+        "--vllm-python",
+        default=sys.executable,
+        help="Python executable used to start vLLM in sequential serving mode.",
+    )
+    parser.add_argument(
+        "--vllm-extra-args",
+        default="",
+        help=(
+            "Extra arguments appended to `python -m vllm.entrypoints.openai.api_server`. "
+            "Pass them as one quoted string."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -248,6 +295,95 @@ def parse_metrics(output: str) -> dict[str, Any]:
         "unsupported_count": len(re.findall(r"Un-support ground truth|Skip: no golden answer", output)),
         "query_count": len(re.findall(r"^Query:\s", output, flags=re.MULTILINE)),
     }
+
+
+def sequential_base_url(args: argparse.Namespace) -> str:
+    return f"http://{args.serve_client_host}:{args.serve_port}/v1"
+
+
+def wait_for_server(base_url: str, process: subprocess.Popen, timeout_seconds: int) -> None:
+    deadline = time.monotonic() + timeout_seconds
+    models_url = f"{base_url.rstrip('/')}/models"
+    last_error = None
+
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            raise RuntimeError(f"vLLM exited before becoming ready with code {process.returncode}.")
+        try:
+            with urllib.request.urlopen(models_url, timeout=5) as response:
+                if 200 <= response.status < 500:
+                    return
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            last_error = exc
+        time.sleep(5)
+
+    raise TimeoutError(f"Timed out waiting for {models_url}. Last error: {last_error}")
+
+
+def start_vllm_server(
+    model: dict[str, str],
+    model_dir: Path,
+    args: argparse.Namespace,
+) -> tuple[subprocess.Popen, Any, Any]:
+    server_dir = model_dir / "vllm_server"
+    server_dir.mkdir(parents=True, exist_ok=True)
+    stdout_file = (server_dir / "stdout.txt").open("w", encoding="utf-8")
+    stderr_file = (server_dir / "stderr.txt").open("w", encoding="utf-8")
+
+    command = [
+        args.vllm_python,
+        "-m",
+        "vllm.entrypoints.openai.api_server",
+        "--model",
+        model["llm_model"],
+        "--host",
+        args.serve_host,
+        "--port",
+        str(args.serve_port),
+        *shlex.split(args.vllm_extra_args),
+    ]
+    metadata = {
+        "model_name": model["name"],
+        "llm_model": model["llm_model"],
+        "command": command,
+        "base_url": sequential_base_url(args),
+        "started_at": datetime.now(timezone.utc).isoformat(),
+        "stdout_path": str(server_dir / "stdout.txt"),
+        "stderr_path": str(server_dir / "stderr.txt"),
+    }
+    (server_dir / "server.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+
+    process = subprocess.Popen(
+        command,
+        cwd=REPO_ROOT,
+        env=os.environ.copy(),
+        stdout=stdout_file,
+        stderr=stderr_file,
+        text=True,
+        start_new_session=True,
+    )
+    wait_for_server(sequential_base_url(args), process, args.serve_start_timeout_seconds)
+    return process, stdout_file, stderr_file
+
+
+def stop_vllm_server(process: subprocess.Popen, stdout_file: Any, stderr_file: Any) -> None:
+    try:
+        if process.poll() is None:
+            try:
+                os.killpg(process.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+            try:
+                process.wait(timeout=60)
+            except subprocess.TimeoutExpired:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                process.wait(timeout=30)
+    finally:
+        stdout_file.close()
+        stderr_file.close()
 
 
 def run_test(
@@ -381,6 +517,8 @@ def main() -> int:
         "models": models,
         "tests": [test.name for test in tests],
         "timeout_seconds": args.timeout_seconds,
+        "serve_models_sequentially": args.serve_models_sequentially,
+        "sequential_base_url": sequential_base_url(args) if args.serve_models_sequentially else None,
     }
     (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
@@ -388,6 +526,13 @@ def main() -> int:
         print(f"Dry run manifest written to: {run_dir / 'manifest.json'}")
         for model in models:
             print(f"== Model: {model['name']} ({model['llm_model']}) ==")
+            if args.serve_models_sequentially:
+                print(
+                    "Sequential server: "
+                    f"{args.vllm_python} -m vllm.entrypoints.openai.api_server "
+                    f"--model {model['llm_model']} --host {args.serve_host} "
+                    f"--port {args.serve_port} {args.vllm_extra_args}".strip()
+                )
             for test in tests:
                 print(f"- {test.name}: cwd={test.cwd} command={' '.join(test.command)}")
         return 0
@@ -396,32 +541,60 @@ def main() -> int:
     for model_index, model in enumerate(models):
         model_dir = run_dir / _slug(model["name"])
         model_dir.mkdir(parents=True, exist_ok=True)
+        active_model = dict(model)
+        server_process = None
+        server_stdout = None
+        server_stderr = None
         print(f"== Model: {model['name']} ({model['llm_model']}) ==")
 
-        for test in tests:
-            if (
-                args.skip_non_llm_tests_after_first_model
-                and model_index > 0
-                and not test.requires_llm
-            ):
-                print(f"Skipping {test.name}: does not depend on LLM_MODEL.")
+        if args.serve_models_sequentially:
+            active_model["llm_base_url"] = sequential_base_url(args)
+            active_model["llm_api_key"] = model.get("llm_api_key") or args.api_key
+            print(f"Starting vLLM on {active_model['llm_base_url']}...")
+            try:
+                server_process, server_stdout, server_stderr = start_vllm_server(
+                    active_model,
+                    model_dir,
+                    args,
+                )
+                print("vLLM is ready.")
+            except Exception as exc:
+                error_path = model_dir / "vllm_server_start_error.txt"
+                error_path.write_text(str(exc), encoding="utf-8")
+                print(f"Failed to start vLLM for {model['name']}: {exc}")
+                if not args.continue_on_failure:
+                    return 1
                 continue
 
-            print(f"Running {test.name}...")
-            result = run_test(model, test, model_dir, args.timeout_seconds)
-            results.append(result)
-            write_summary(run_dir, results)
+        try:
+            for test in tests:
+                if (
+                    args.skip_non_llm_tests_after_first_model
+                    and model_index > 0
+                    and not test.requires_llm
+                ):
+                    print(f"Skipping {test.name}: does not depend on LLM_MODEL.")
+                    continue
 
-            status = "ok" if result["success"] else "failed"
-            print(
-                f"Finished {test.name}: {status}, "
-                f"returncode={result['returncode']}, "
-                f"duration={result['duration_seconds']}s"
-            )
+                print(f"Running {test.name}...")
+                result = run_test(active_model, test, model_dir, args.timeout_seconds)
+                results.append(result)
+                write_summary(run_dir, results)
 
-            if not result["success"] and not args.continue_on_failure:
-                print("Stopping after failure. Use --continue-on-failure to keep going.")
-                return 1
+                status = "ok" if result["success"] else "failed"
+                print(
+                    f"Finished {test.name}: {status}, "
+                    f"returncode={result['returncode']}, "
+                    f"duration={result['duration_seconds']}s"
+                )
+
+                if not result["success"] and not args.continue_on_failure:
+                    print("Stopping after failure. Use --continue-on-failure to keep going.")
+                    return 1
+        finally:
+            if server_process is not None and server_stdout is not None and server_stderr is not None:
+                print(f"Stopping vLLM for {model['name']}...")
+                stop_vllm_server(server_process, server_stdout, server_stderr)
 
     write_summary(run_dir, results)
     print(f"Benchmark results written to: {run_dir}")

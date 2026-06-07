@@ -29,7 +29,12 @@ Each wrapped test is executed in a separate subprocess with model-specific envir
 
 ## Requirements
 
-The runner expects each model to already be served through an OpenAI-compatible API, for example with vLLM. It does not start or stop vLLM servers because model loading depends on local GPU availability and deployment preferences.
+The runner can work in two modes:
+
+- External-server mode: each model is already served through an OpenAI-compatible API.
+- Sequential vLLM mode: the runner starts one vLLM server per model, runs that model's tests, stops it, and then starts the next model.
+
+Sequential vLLM mode is the recommended option when using a single GPU.
 
 Example server command:
 
@@ -40,7 +45,42 @@ python3 -m vllm.entrypoints.openai.api_server \
   --port 8000
 ```
 
-For multiple models, either run one server per model on different ports or run the benchmark once per served model.
+For external-server mode with multiple models, either run one server per model on different ports or run the benchmark once per served model.
+
+## Sequential Single-GPU Benchmark
+
+Use this mode when you want to benchmark several models but only have enough GPU memory to load one at a time.
+
+```bash
+cd ~/MeshAgent
+source .venv/bin/activate
+
+python scripts/benchmark_opensource_models.py \
+  --config scripts/benchmark_models.example.json \
+  --serve-models-sequentially \
+  --serve-port 8000 \
+  --vllm-extra-args "--max-model-len 8192 --gpu-memory-utilization 0.90 --max-num-seqs 1" \
+  --skip-non-llm-tests-after-first-model \
+  --continue-on-failure
+```
+
+What happens internally:
+
+1. Start vLLM for the first model on `http://localhost:8000/v1`.
+2. Wait until `/v1/models` responds.
+3. Run the selected benchmark wrappers.
+4. Stop that vLLM process.
+5. Repeat the same process for the next model.
+
+In this mode, the `llm_base_url` values in the JSON config are overridden by the sequential server URL. The model IDs are still read from the config.
+
+Before running, make sure port `8000` is free:
+
+```bash
+lsof -i :8000
+```
+
+If an old vLLM server is still running on that port, stop it first.
 
 ## Running a Benchmark
 
